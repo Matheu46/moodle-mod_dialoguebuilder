@@ -27,6 +27,26 @@ require_capability('moodle/course:manageactivities', $context); // Use viewall c
 $PAGE->set_url(new moodle_url('/mod/dialoguebuilder/report.php', ['id' => $cm->id]));
 $PAGE->set_context($context);
 
+if ($action === 'grade' && data_submitted() && confirm_sesskey()) {
+    $grade = optional_param('grade', null, PARAM_FLOAT);
+    $feedback = optional_param('feedback', '', PARAM_RAW);
+    $submission = $DB->get_record('dialoguebuilder_subs', ['id' => $subid, 'dialoguebuilderid' => $dialoguebuilder->id], '*', MUST_EXIST);
+    
+    $submission->grade = $grade;
+    $submission->feedback = $feedback;
+    $submission->timemodified = time();
+    $DB->update_record('dialoguebuilder_subs', $submission);
+    
+    dialoguebuilder_update_grades($dialoguebuilder, $submission->userid);
+    
+    redirect(
+        new moodle_url('/mod/dialoguebuilder/report.php', ['id' => $cm->id]), 
+        get_string('gradesaved', 'mod_dialoguebuilder'),
+        null,
+        \core\output\notification::NOTIFY_SUCCESS
+    );
+}
+
 if ($action === 'view' && $subid) {
     // View a specific submission.
     $submission = $DB->get_record('dialoguebuilder_subs', ['id' => $subid, 'dialoguebuilderid' => $dialoguebuilder->id], '*', MUST_EXIST);
@@ -70,6 +90,44 @@ if ($action === 'view' && $subid) {
         echo $OUTPUT->render_from_template('mod_dialoguebuilder/chat_view', $templatedata);
     }
     
+    // Grading Form
+    if ($dialoguebuilder->grade > 0) {
+        echo $OUTPUT->box_start('generalbox mt-4 p-4', 'grading-box', ['style' => 'background: #f8f9fa; border-radius: 8px; border: 1px solid #ddd; max-width: 600px; margin: 0 auto;']);
+        echo $OUTPUT->heading(get_string('grade', 'mod_dialoguebuilder'), 3);
+        
+        $gradeurl = new moodle_url('/mod/dialoguebuilder/report.php');
+        echo html_writer::start_tag('form', ['action' => $gradeurl, 'method' => 'post']);
+        echo html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'id', 'value' => $cm->id]);
+        echo html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'action', 'value' => 'grade']);
+        echo html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'subid', 'value' => $subid]);
+        echo html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()]);
+        
+        echo html_writer::start_tag('div', ['class' => 'form-group mb-3']);
+        echo html_writer::label(get_string('grade', 'mod_dialoguebuilder') . ' (0 - ' . $dialoguebuilder->grade . '):', 'gradeinput', false, ['class' => 'd-block font-weight-bold']);
+        echo html_writer::empty_tag('input', [
+            'type' => 'number', 
+            'name' => 'grade', 
+            'id' => 'gradeinput', 
+            'class' => 'form-control', 
+            'style' => 'max-width: 150px;',
+            'min' => '0', 
+            'max' => $dialoguebuilder->grade, 
+            'step' => '0.1', 
+            'value' => isset($submission->grade) ? $submission->grade : ''
+        ]);
+        echo html_writer::end_tag('div');
+        
+        echo html_writer::start_tag('div', ['class' => 'form-group mb-3']);
+        echo html_writer::label(get_string('feedback', 'mod_dialoguebuilder') . ':', 'feedbackinput', false, ['class' => 'd-block font-weight-bold']);
+        echo html_writer::tag('textarea', s(isset($submission->feedback) ? $submission->feedback : ''), ['name' => 'feedback', 'id' => 'feedbackinput', 'class' => 'form-control w-100', 'rows' => '4']);
+        echo html_writer::end_tag('div');
+        
+        echo html_writer::empty_tag('input', ['type' => 'submit', 'value' => get_string('savechanges'), 'class' => 'btn btn-primary']);
+        
+        echo html_writer::end_tag('form');
+        echo $OUTPUT->box_end();
+    }
+    
 } else {
     // List all submissions.
     $PAGE->set_title(get_string('submissions', 'mod_dialoguebuilder'));
@@ -94,6 +152,7 @@ if ($action === 'view' && $subid) {
             get_string('status', 'mod_dialoguebuilder'),
             get_string('characters', 'mod_dialoguebuilder'),
             get_string('lines', 'mod_dialoguebuilder'),
+            get_string('grade', 'mod_dialoguebuilder'),
             get_string('timecreated', 'mod_dialoguebuilder'),
             get_string('actions', 'mod_dialoguebuilder')
         ];
@@ -109,11 +168,14 @@ if ($action === 'view' && $subid) {
             $viewurl = new moodle_url('/mod/dialoguebuilder/report.php', ['id' => $cm->id, 'action' => 'view', 'subid' => $sub->id]);
             $viewlink = html_writer::link($viewurl, get_string('viewdialogue', 'mod_dialoguebuilder'), ['class' => 'btn btn-primary btn-sm']);
             
+            $grade_display = isset($sub->grade) ? format_float($sub->grade, 1) : '-';
+            
             $table->data[] = [
                 $fullname,
                 $sub->status,
                 $charcount,
                 $linecount,
+                $grade_display,
                 userdate($sub->timecreated),
                 $viewlink
             ];

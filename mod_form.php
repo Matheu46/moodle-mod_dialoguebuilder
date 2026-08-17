@@ -40,6 +40,9 @@ class mod_dialoguebuilder_mod_form extends moodleform_mod {
         // Activity introduction.
         $this->standard_intro_elements();
 
+        // Standard grading elements.
+        $this->standard_grading_coursemodule_elements();
+
         // Standard course module elements.
         $this->standard_coursemodule_elements();
 

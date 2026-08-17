@@ -38,3 +38,6 @@ $string['dialoguefor'] = 'Dialogue for {$a}';
 $string['backtosubmissions'] = 'Back to submissions';
 $string['lines'] = 'Lines';
 $string['characters'] = 'Characters';
+$string['grade'] = 'Grade';
+$string['gradesaved'] = 'Grade saved successfully';
+$string['feedback'] = 'Feedback';
