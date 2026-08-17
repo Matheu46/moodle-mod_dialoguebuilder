@@ -23,3 +23,18 @@ $string['dialoguebuilder:addinstance'] = 'Add a new Dialogue Builder activity';
 $string['dialoguebuilder:view'] = 'View Dialogue Builder';
 $string['dialoguebuilder:submit'] = 'Submit a dialogue script';
 $string['dialoguebuilder:grade'] = 'Grade dialogues';
+
+// Report and submission strings.
+$string['viewsubmissions'] = 'View submissions';
+$string['submissions'] = 'Submissions';
+$string['student'] = 'Student';
+$string['status'] = 'Status';
+$string['timecreated'] = 'Time created';
+$string['timemodified'] = 'Last modified';
+$string['actions'] = 'Actions';
+$string['viewdialogue'] = 'View dialogue';
+$string['nosubmissions'] = 'No submissions yet.';
+$string['dialoguefor'] = 'Dialogue for {$a}';
+$string['backtosubmissions'] = 'Back to submissions';
+$string['lines'] = 'Lines';
+$string['characters'] = 'Characters';

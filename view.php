@@ -49,7 +49,8 @@ if (has_capability('moodle/course:manageactivities', $context)) {
     
     echo $OUTPUT->box("Resumo para Professores: $submissioncount alunos submeteram diálogos até o momento.", 'generalbox teacher-view-box');
     
-    // In the future: Add a table or link to grade/view submissions here.
+    $reporturl = new moodle_url('/mod/dialoguebuilder/report.php', ['id' => $cm->id]);
+    echo $OUTPUT->single_button($reporturl, get_string('viewsubmissions', 'mod_dialoguebuilder'), 'get', ['primary' => true]);
 } else {
     // Student view.
     echo $OUTPUT->box('Leia as diretrizes do professor acima e crie o seu roteiro de falas.', 'generalbox student-view-box');
