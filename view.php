@@ -55,9 +55,43 @@ if (has_capability('moodle/course:manageactivities', $context)) {
     // Student view.
     echo $OUTPUT->box('Leia as diretrizes do professor acima e crie o seu roteiro de falas.', 'generalbox student-view-box');
     
+    // Check if the student has already submitted.
+    $submission = $DB->get_record('dialoguebuilder_subs', [
+        'dialoguebuilderid' => $dialoguebuilder->id,
+        'userid' => $USER->id
+    ]);
+
+    if ($submission) {
+        // Fetch characters to map IDs to names.
+        $characters = $DB->get_records('dialoguebuilder_chars', ['submissionid' => $submission->id], 'id ASC');
+        $char_map = [];
+        $first_char_id = null;
+        foreach ($characters as $char) {
+            $char_map[$char->id] = $char->name;
+            if ($first_char_id === null) {
+                $first_char_id = $char->id; // First character created is considered "self"
+            }
+        }
+
+        $lines = $DB->get_records('dialoguebuilder_lines', ['submissionid' => $submission->id], 'sortorder ASC');
+        
+        $templatedata = ['lines' => []];
+        foreach ($lines as $line) {
+            $templatedata['lines'][] = [
+                'charname' => isset($char_map[$line->characterid]) ? $char_map[$line->characterid] : 'Desconhecido',
+                'text' => format_text($line->text_content, FORMAT_MOODLE),
+                'is_self' => ($line->characterid == $first_char_id)
+            ];
+        }
+
+        echo $OUTPUT->heading('Seu Diálogo', 3);
+        echo $OUTPUT->render_from_template('mod_dialoguebuilder/chat_view', $templatedata);
+    }
+    
     // Render a button to start/edit the dialogue.
     $url = new moodle_url('/mod/dialoguebuilder/edit.php', ['id' => $cm->id]);
-    echo $OUTPUT->single_button($url, 'Iniciar/Editar Diálogo', 'get', ['primary' => true]);
+    $btn_text = $submission ? 'Editar Diálogo' : 'Iniciar Diálogo';
+    echo $OUTPUT->single_button($url, $btn_text, 'get', ['primary' => true]);
 }
 
 // Finish the page.

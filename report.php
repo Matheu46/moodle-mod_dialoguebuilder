@@ -45,8 +45,12 @@ if ($action === 'view' && $subid) {
     // Fetch characters.
     $characters = $DB->get_records('dialoguebuilder_chars', ['submissionid' => $submission->id], 'id ASC');
     $char_map = [];
+    $first_char_id = null;
     foreach ($characters as $char) {
         $char_map[$char->id] = $char->name;
+        if ($first_char_id === null) {
+            $first_char_id = $char->id;
+        }
     }
     
     // Fetch lines.
@@ -55,16 +59,15 @@ if ($action === 'view' && $subid) {
     if (empty($lines)) {
         echo $OUTPUT->notification("Nenhum diálogo encontrado para esta submissão.", 'info');
     } else {
-        echo html_writer::start_tag('div', ['class' => 'dialogue-view-container p-3', 'style' => 'background: #f8f9fa; border-radius: 8px;']);
+        $templatedata = ['lines' => []];
         foreach ($lines as $line) {
-            $charname = isset($char_map[$line->characterid]) ? $char_map[$line->characterid] : 'Desconhecido';
-            
-            echo html_writer::start_tag('div', ['class' => 'dialogue-line mb-2 p-2', 'style' => 'background: #fff; border-left: 4px solid #007bff;']);
-            echo html_writer::tag('strong', s($charname) . ': ');
-            echo html_writer::span(format_text($line->text_content, FORMAT_MOODLE));
-            echo html_writer::end_tag('div');
+            $templatedata['lines'][] = [
+                'charname' => isset($char_map[$line->characterid]) ? $char_map[$line->characterid] : 'Desconhecido',
+                'text' => format_text($line->text_content, FORMAT_MOODLE),
+                'is_self' => ($line->characterid == $first_char_id)
+            ];
         }
-        echo html_writer::end_tag('div');
+        echo $OUTPUT->render_from_template('mod_dialoguebuilder/chat_view', $templatedata);
     }
     
 } else {
