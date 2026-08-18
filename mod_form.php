@@ -40,6 +40,15 @@ class mod_dialoguebuilder_mod_form extends moodleform_mod {
         // Activity introduction.
         $this->standard_intro_elements();
 
+        // Availability dates.
+        $mform->addElement('header', 'availability', get_string('availability', 'mod_dialoguebuilder'));
+        
+        $mform->addElement('date_time_selector', 'timeopen', get_string('timeopen', 'mod_dialoguebuilder'), ['optional' => true]);
+        $mform->setDefault('timeopen', 0);
+        
+        $mform->addElement('date_time_selector', 'timeclose', get_string('timeclose', 'mod_dialoguebuilder'), ['optional' => true]);
+        $mform->setDefault('timeclose', 0);
+
         // Standard grading elements.
         $this->standard_grading_coursemodule_elements();
 

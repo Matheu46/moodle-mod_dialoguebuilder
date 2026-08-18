@@ -26,6 +26,15 @@ $PAGE->set_title(format_string($dialoguebuilder->name));
 $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_context($context);
 
+// Check availability dates.
+$now = time();
+if ($dialoguebuilder->timeopen > 0 && $now < $dialoguebuilder->timeopen) {
+    throw new \moodle_exception('notopenyet', 'mod_dialoguebuilder', '', userdate($dialoguebuilder->timeopen));
+}
+if ($dialoguebuilder->timeclose > 0 && $now > $dialoguebuilder->timeclose) {
+    throw new \moodle_exception('submissionsclosed', 'mod_dialoguebuilder', '', userdate($dialoguebuilder->timeclose));
+}
+
 // Process form submission.
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'save') {
     require_sesskey();

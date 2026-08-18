@@ -88,10 +88,23 @@ if (has_capability('moodle/course:manageactivities', $context)) {
         echo $OUTPUT->render_from_template('mod_dialoguebuilder/chat_view', $templatedata);
     }
     
-    // Render a button to start/edit the dialogue.
-    $url = new moodle_url('/mod/dialoguebuilder/edit.php', ['id' => $cm->id]);
-    $btn_text = $submission ? 'Editar Diálogo' : 'Iniciar Diálogo';
-    echo $OUTPUT->single_button($url, $btn_text, 'get', ['primary' => true]);
+    // Check dates.
+    $now = time();
+    $isopen = true;
+    if ($dialoguebuilder->timeopen > 0 && $now < $dialoguebuilder->timeopen) {
+        $isopen = false;
+        echo $OUTPUT->notification(get_string('notopenyet', 'mod_dialoguebuilder', userdate($dialoguebuilder->timeopen)), 'info');
+    } else if ($dialoguebuilder->timeclose > 0 && $now > $dialoguebuilder->timeclose) {
+        $isopen = false;
+        echo $OUTPUT->notification(get_string('submissionsclosed', 'mod_dialoguebuilder', userdate($dialoguebuilder->timeclose)), 'warning');
+    }
+    
+    // Render a button to start/edit the dialogue only if open.
+    if ($isopen) {
+        $url = new moodle_url('/mod/dialoguebuilder/edit.php', ['id' => $cm->id]);
+        $btn_text = $submission ? 'Editar Diálogo' : 'Iniciar Diálogo';
+        echo $OUTPUT->single_button($url, $btn_text, 'get', ['primary' => true]);
+    }
 }
 
 // Finish the page.
