@@ -1,4 +1,19 @@
 <?php
+// This file is part of Moodle - https://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+
 /**
  * Library of functions and constants for module dialoguebuilder.
  *
@@ -64,15 +79,15 @@ function dialoguebuilder_delete_instance($id) {
 
     // Get all submissions for this dialoguebuilder.
     $submissions = $DB->get_records('dialoguebuilder_subs', ['dialoguebuilderid' => $id]);
-    
+
     if ($submissions) {
         $subids = array_keys($submissions);
-        list($insql, $inparams) = $DB->get_in_or_equal($subids);
-        
+        [$insql, $inparams] = $DB->get_in_or_equal($subids);
+
         // Delete lines and characters.
         $DB->delete_records_select('dialoguebuilder_lines', "submissionid $insql", $inparams);
         $DB->delete_records_select('dialoguebuilder_chars', "submissionid $insql", $inparams);
-        
+
         // Delete submissions.
         $DB->delete_records_select('dialoguebuilder_subs', "dialoguebuilderid = ?", [$id]);
     }
@@ -119,7 +134,7 @@ function dialoguebuilder_supports($feature) {
  */
 function dialoguebuilder_grade_item_update($dialoguebuilder, $grades = null) {
     global $CFG;
-    require_once($CFG->libdir.'/gradelib.php');
+    require_once($CFG->libdir . '/gradelib.php');
 
     $item = [];
     $item['itemname'] = clean_param($dialoguebuilder->name, PARAM_NOTAGS);
@@ -146,7 +161,7 @@ function dialoguebuilder_grade_item_update($dialoguebuilder, $grades = null) {
  */
 function dialoguebuilder_update_grades($dialoguebuilder, $userid = 0, $nullifnone = true) {
     global $CFG, $DB;
-    require_once($CFG->libdir.'/gradelib.php');
+    require_once($CFG->libdir . '/gradelib.php');
 
     if ($dialoguebuilder->grade == 0) {
         dialoguebuilder_grade_item_update($dialoguebuilder);
@@ -190,7 +205,7 @@ function dialoguebuilder_update_grades($dialoguebuilder, $userid = 0, $nullifnon
  */
 function dialoguebuilder_grade_item_delete($dialoguebuilder) {
     global $CFG;
-    require_once($CFG->libdir.'/gradelib.php');
+    require_once($CFG->libdir . '/gradelib.php');
 
     return grade_update('mod/dialoguebuilder', $dialoguebuilder->course, 'mod', 'dialoguebuilder', $dialoguebuilder->id, 0, null, ['deleted' => 1]);
 }

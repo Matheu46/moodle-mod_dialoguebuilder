@@ -1,4 +1,19 @@
 <?php
+// This file is part of Moodle - https://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+
 /**
  * Prints a particular instance of dialoguebuilder.
  *
@@ -7,8 +22,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require(__DIR__.'/../../config.php');
-require_once(__DIR__.'/lib.php');
+require(__DIR__ . '/../../config.php');
+require_once(__DIR__ . '/lib.php');
 
 // Retrieve the required parameter 'id' (course module ID).
 $id = required_param('id', PARAM_INT);
@@ -46,19 +61,19 @@ if (!empty($dialoguebuilder->intro)) {
 if (has_capability('moodle/course:manageactivities', $context)) {
     // Teacher view.
     $submissioncount = $DB->count_records('dialoguebuilder_subs', ['dialoguebuilderid' => $dialoguebuilder->id]);
-    
+
     echo $OUTPUT->box("Resumo para Professores: $submissioncount alunos submeteram diálogos até o momento.", 'generalbox teacher-view-box');
-    
+
     $reporturl = new moodle_url('/mod/dialoguebuilder/report.php', ['id' => $cm->id]);
     echo $OUTPUT->single_button($reporturl, get_string('viewsubmissions', 'mod_dialoguebuilder'), 'get', ['primary' => true]);
 } else {
     // Student view.
     echo $OUTPUT->box('Leia as diretrizes do professor acima e crie o seu roteiro de falas.', 'generalbox student-view-box');
-    
+
     // Check if the student has already submitted.
     $submission = $DB->get_record('dialoguebuilder_subs', [
         'dialoguebuilderid' => $dialoguebuilder->id,
-        'userid' => $USER->id
+        'userid' => $USER->id,
     ]);
 
     if ($submission) {
@@ -74,20 +89,20 @@ if (has_capability('moodle/course:manageactivities', $context)) {
         }
 
         $lines = $DB->get_records('dialoguebuilder_lines', ['submissionid' => $submission->id], 'sortorder ASC');
-        
+
         $templatedata = ['lines' => []];
         foreach ($lines as $line) {
             $templatedata['lines'][] = [
                 'charname' => isset($char_map[$line->characterid]) ? $char_map[$line->characterid] : 'Desconhecido',
                 'text' => format_text($line->text_content, FORMAT_MOODLE),
-                'is_self' => ($line->characterid == $first_char_id)
+                'is_self' => ($line->characterid == $first_char_id),
             ];
         }
 
         echo $OUTPUT->heading('Seu Diálogo', 3);
         echo $OUTPUT->render_from_template('mod_dialoguebuilder/chat_view', $templatedata);
     }
-    
+
     // Check dates.
     $now = time();
     $isopen = true;
@@ -98,7 +113,7 @@ if (has_capability('moodle/course:manageactivities', $context)) {
         $isopen = false;
         echo $OUTPUT->notification(get_string('submissionsclosed', 'mod_dialoguebuilder', userdate($dialoguebuilder->timeclose)), 'warning');
     }
-    
+
     // Render a button to start/edit the dialogue only if open.
     if ($isopen) {
         $url = new moodle_url('/mod/dialoguebuilder/edit.php', ['id' => $cm->id]);

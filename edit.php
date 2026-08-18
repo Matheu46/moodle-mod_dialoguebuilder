@@ -1,4 +1,19 @@
 <?php
+// This file is part of Moodle - https://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+
 /**
  * Editor for students to create their dialogue.
  *
@@ -7,8 +22,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require(__DIR__.'/../../config.php');
-require_once(__DIR__.'/lib.php');
+require(__DIR__ . '/../../config.php');
+require_once(__DIR__ . '/lib.php');
 
 $id = required_param('id', PARAM_INT);
 $action = optional_param('action', '', PARAM_ALPHANUMEXT);
@@ -38,7 +53,7 @@ if ($dialoguebuilder->timeclose > 0 && $now > $dialoguebuilder->timeclose) {
 // Process form submission.
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'save') {
     require_sesskey();
-    
+
     $dialoguedata_raw = required_param('dialoguedata', PARAM_RAW);
     $dialoguedata = json_decode($dialoguedata_raw);
 
@@ -46,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'save') {
         // Find existing submission or create new.
         $submission = $DB->get_record('dialoguebuilder_subs', [
             'dialoguebuilderid' => $dialoguebuilder->id,
-            'userid' => $USER->id
+            'userid' => $USER->id,
         ]);
 
         if (!$submission) {
@@ -61,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'save') {
             $submission->timemodified = time();
             $submission->status = 'submitted';
             $DB->update_record('dialoguebuilder_subs', $submission);
-            
+
             // Clean old chars and lines to rewrite (simple approach).
             $DB->delete_records('dialoguebuilder_lines', ['submissionid' => $submission->id]);
             $DB->delete_records('dialoguebuilder_chars', ['submissionid' => $submission->id]);
@@ -75,7 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'save') {
                 $newchar->submissionid = $submission->id;
                 $newchar->name = clean_param($char->name, PARAM_TEXT);
                 $newchar->avatar_itemid = 0; // Not implemented yet
-                
+
                 $char_map[$char->id] = $DB->insert_record('dialoguebuilder_chars', $newchar);
             }
         }
@@ -87,17 +102,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'save') {
                 if (!isset($char_map[$line->characterid])) {
                     continue; // Character was deleted or invalid.
                 }
-                
+
                 $newline = new stdClass();
                 $newline->submissionid = $submission->id;
                 $newline->characterid = $char_map[$line->characterid];
                 $newline->text_content = clean_param($line->text, PARAM_TEXT);
                 $newline->sortorder = $sortorder++;
-                
+
                 $DB->insert_record('dialoguebuilder_lines', $newline);
             }
         }
-        
+
         // Redirect to view.php with success message.
         redirect(
             new moodle_url('/mod/dialoguebuilder/view.php', ['id' => $cm->id]),
@@ -111,7 +126,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'save') {
 // Load existing data if editing.
 $submission = $DB->get_record('dialoguebuilder_subs', [
     'dialoguebuilderid' => $dialoguebuilder->id,
-    'userid' => $USER->id
+    'userid' => $USER->id,
 ]);
 
 $characters = [];
@@ -122,29 +137,29 @@ if ($submission) {
     foreach ($db_chars as $c) {
         $characters[] = [
             'id' => $c->id,
-            'name' => $c->name
+            'name' => $c->name,
         ];
     }
-    
+
     $db_lines = $DB->get_records('dialoguebuilder_lines', ['submissionid' => $submission->id], 'sortorder ASC');
     foreach ($db_lines as $l) {
         $lines[] = [
             'characterid' => $l->characterid,
-            'text' => $l->text_content
+            'text' => $l->text_content,
         ];
     }
 }
 
 $initialdata = json_encode([
     'characters' => $characters,
-    'lines' => $lines
+    'lines' => $lines,
 ]);
 
 // Prepare data for the template.
 $templatedata = [
     'cmid' => $cm->id,
     'sesskey' => sesskey(),
-    'initialdata' => $initialdata
+    'initialdata' => $initialdata,
 ];
 
 // Require the AMD module.
