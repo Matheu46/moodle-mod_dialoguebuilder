@@ -18,7 +18,7 @@
  * Prints a particular instance of dialoguebuilder.
  *
  * @package    mod_dialoguebuilder
- * @copyright  2026 Matheus
+ * @copyright  2026 Matheus Mathias
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -84,8 +84,23 @@ if (has_capability('moodle/course:manageactivities', $context)) {
         $characters = $DB->get_records('dialoguebuilder_chars', ['submissionid' => $submission->id], 'id ASC');
         $charmap = [];
         $firstcharid = null;
+        $fs = get_file_storage();
+        
         foreach ($characters as $char) {
-            $charmap[$char->id] = $char->name;
+            $avatarurl = '';
+            $files = $fs->get_area_files($context->id, 'mod_dialoguebuilder', 'avatar', $char->id, 'id DESC', false);
+            if (!empty($files)) {
+                $file = reset($files);
+                $avatarurl = moodle_url::make_pluginfile_url($file->get_contextid(), $file->get_component(), $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename())->out(false);
+            }
+            if (empty($avatarurl)) {
+                $avatarurl = $OUTPUT->image_url('u/f2')->out(false);
+            }
+            
+            $charmap[$char->id] = [
+                'name' => $char->name,
+                'avatarurl' => $avatarurl
+            ];
             if ($firstcharid === null) {
                 $firstcharid = $char->id; // First character created is considered "self".
             }
@@ -95,8 +110,10 @@ if (has_capability('moodle/course:manageactivities', $context)) {
 
         $templatedata = ['lines' => [], 'chatid' => 'chat-' . uniqid()];
         foreach ($lines as $line) {
+            $charinfo = isset($charmap[$line->characterid]) ? $charmap[$line->characterid] : ['name' => 'Desconhecido', 'avatarurl' => ''];
             $templatedata['lines'][] = [
-                'charname' => isset($charmap[$line->characterid]) ? $charmap[$line->characterid] : 'Desconhecido',
+                'charname' => $charinfo['name'],
+                'avatarurl' => $charinfo['avatarurl'],
                 'text' => format_text($line->text_content, FORMAT_MOODLE),
                 'is_self' => ($line->characterid == $firstcharid),
             ];

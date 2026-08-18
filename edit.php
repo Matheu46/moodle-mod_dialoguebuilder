@@ -18,7 +18,7 @@
  * Editor for students to create their dialogue.
  *
  * @package    mod_dialoguebuilder
- * @copyright  2026 Matheus
+ * @copyright  2026 Matheus Mathias
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -77,21 +77,70 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'save') {
             $submission->status = 'submitted';
             $DB->update_record('dialoguebuilder_subs', $submission);
 
-            // Clean old chars and lines to rewrite (simple approach).
+            // Clean old lines only. Characters must be updated to preserve avatars.
             $DB->delete_records('dialoguebuilder_lines', ['submissionid' => $submission->id]);
-            $DB->delete_records('dialoguebuilder_chars', ['submissionid' => $submission->id]);
         }
 
         // Save Characters.
         $charmap = []; // Map frontend temp ID to DB ID.
-        if (!empty($dialoguedata->characters)) {
-            foreach ($dialoguedata->characters as $char) {
-                $newchar = new stdClass();
-                $newchar->submissionid = $submission->id;
-                $newchar->name = clean_param($char->name, PARAM_TEXT);
-                $newchar->avatar_itemid = 0; // Not implemented yet.
+        $submittedcharids = []; // To track which characters still exist.
+        
+        // Get the standard Moodle upload limit for the course.
+        $maxbytes = get_max_upload_file_size($CFG->maxbytes, $course->maxbytes);
 
-                $charmap[$char->id] = $DB->insert_record('dialoguebuilder_chars', $newchar);
+        if (!empty($dialoguedata->characters)) {
+            $fs = get_file_storage();
+            $context = context_module::instance($cm->id);
+            $existingchars = $DB->get_records('dialoguebuilder_chars', ['submissionid' => $submission->id]);
+
+            foreach ($dialoguedata->characters as $char) {
+                // If it's an existing character (id matches an existing DB record)
+                if (isset($existingchars[$char->id])) {
+                    $dbchar = $existingchars[$char->id];
+                    $dbchar->name = clean_param($char->name, PARAM_TEXT);
+                    $DB->update_record('dialoguebuilder_chars', $dbchar);
+                    $charid = $dbchar->id;
+                } else {
+                    $newchar = new stdClass();
+                    $newchar->submissionid = $submission->id;
+                    $newchar->name = clean_param($char->name, PARAM_TEXT);
+                    $newchar->avatar_itemid = 0;
+                    $charid = $DB->insert_record('dialoguebuilder_chars', $newchar);
+                }
+
+                $charmap[$char->id] = $charid;
+                $submittedcharids[] = $charid;
+
+                // Handle avatar upload if present.
+                if (isset($_FILES['avatars']) && isset($_FILES['avatars']['tmp_name'][$char->id]) && $_FILES['avatars']['error'][$char->id] === UPLOAD_ERR_OK) {
+                    $tmpname = $_FILES['avatars']['tmp_name'][$char->id];
+                    $filesize = filesize($tmpname);
+                    
+                    if ($filesize <= $maxbytes) {
+                        $fileinfo = [
+                            'contextid' => $context->id,
+                            'component' => 'mod_dialoguebuilder',
+                            'filearea' => 'avatar',
+                            'itemid' => $charid,
+                            'filepath' => '/',
+                            'filename' => 'avatar.png', // Or extract original extension.
+                        ];
+                        // Delete old avatar if exists.
+                        $fs->delete_area_files($context->id, 'mod_dialoguebuilder', 'avatar', $charid);
+                        // Save new avatar.
+                        $fs->create_file_from_pathname($fileinfo, $tmpname);
+                    }
+                }
+            }
+            
+            // Delete removed characters and their avatars.
+            if (!empty($existingchars)) {
+                foreach ($existingchars as $ec) {
+                    if (!in_array($ec->id, $submittedcharids)) {
+                        $DB->delete_records('dialoguebuilder_chars', ['id' => $ec->id]);
+                        $fs->delete_area_files($context->id, 'mod_dialoguebuilder', 'avatar', $ec->id);
+                    }
+                }
             }
         }
 
@@ -134,10 +183,21 @@ $lines = [];
 
 if ($submission) {
     $dbchars = $DB->get_records('dialoguebuilder_chars', ['submissionid' => $submission->id]);
+    $fs = get_file_storage();
+    $context = context_module::instance($cm->id);
+    
     foreach ($dbchars as $c) {
+        $avatarurl = '';
+        $files = $fs->get_area_files($context->id, 'mod_dialoguebuilder', 'avatar', $c->id, 'id DESC', false);
+        if (!empty($files)) {
+            $file = reset($files);
+            $avatarurl = moodle_url::make_pluginfile_url($file->get_contextid(), $file->get_component(), $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename())->out(false);
+        }
+        
         $characters[] = [
             'id' => $c->id,
             'name' => $c->name,
+            'avatarurl' => $avatarurl
         ];
     }
 

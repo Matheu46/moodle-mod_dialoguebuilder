@@ -18,7 +18,7 @@
  * Library of functions and constants for module dialoguebuilder.
  *
  * @package    mod_dialoguebuilder
- * @copyright  2026 Matheus
+ * @copyright  2026 Matheus Mathias
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -224,4 +224,45 @@ function dialoguebuilder_grade_item_delete($dialoguebuilder) {
         null,
         ['deleted' => 1]
     );
+}
+
+/**
+ * Serves the dialoguebuilder files.
+ *
+ * @param stdClass $course
+ * @param stdClass $cm
+ * @param context $context
+ * @param string $filearea
+ * @param array $args
+ * @param bool $forcedownload
+ * @param array $options
+ * @return bool false if file not found, does not return if found
+ */
+function dialoguebuilder_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = array()) {
+    global $DB;
+
+    if ($context->contextlevel != CONTEXT_MODULE) {
+        return false;
+    }
+
+    require_login($course, true, $cm);
+
+    if ($filearea === 'avatar') {
+        $itemid = (int)array_shift($args);
+        if ($itemid == 0) {
+            return false;
+        }
+
+        $fs = get_file_storage();
+        $relativepath = implode('/', $args);
+        $fullpath = "/{$context->id}/mod_dialoguebuilder/avatar/{$itemid}/{$relativepath}";
+
+        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+            return false;
+        }
+
+        send_stored_file($file, 0, 0, $forcedownload, $options);
+    }
+    
+    return false;
 }

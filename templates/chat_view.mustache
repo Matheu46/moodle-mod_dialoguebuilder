@@ -29,7 +29,8 @@
 .chat-message {
     max-width: 80%;
     display: none; /* Hide from flow initially so scrollHeight starts small */
-    flex-direction: column;
+    flex-direction: row;
+    align-items: flex-end;
 }
 .chat-message.typing, .chat-message.show {
     display: flex;
@@ -117,6 +118,9 @@
 <div class="dialogue-chat-container" id="{{chatid}}">
     {{#lines}}
     <div class="chat-message {{#is_self}}self{{/is_self}}{{^is_self}}other{{/is_self}}">
+        {{#avatarurl}}
+            <img src="{{avatarurl}}" alt="{{charname}}" class="chat-avatar flex-shrink-0 {{#is_self}}order-2 ms-2{{/is_self}}{{^is_self}}me-2{{/is_self}}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
+        {{/avatarurl}}
         <div class="chat-bubble">
             {{^is_self}}<div class="chat-author">{{charname}}</div>{{/is_self}}
             <div class="chat-typing"><span></span><span></span><span></span></div>

@@ -55,6 +55,62 @@ define(['jquery'], function($) {
                 characters.forEach(function(c) {
                     var $li = $('<li class="list-group-item d-flex gap-2 align-items-center"></li>');
 
+                    // Avatar wrapper
+                    var avatarSrc = c.avatarDataUrl || c.avatarurl || M.util.image_url('u/f2');
+                    var $avatarContainer = $('<div></div>')
+                        .addClass('position-relative d-inline-block')
+                        .css({
+                            'width': '40px',
+                            'height': '40px',
+                            'cursor': 'pointer'
+                        })
+                        .attr('title', 'Clique para alterar a foto');
+
+                    var $avatarImg = $('<img>')
+                        .addClass('rounded-circle')
+                        .css({
+                            'width': '100%',
+                            'height': '100%',
+                            'object-fit': 'cover'
+                        })
+                        .attr('src', avatarSrc);
+
+                    var $avatarOverlay = $('<div></div>')
+                        .addClass('position-absolute d-flex align-items-center justify-content-center text-white rounded-circle')
+                        .css({
+                            'top': '0', 'left': '0', 'right': '0', 'bottom': '0',
+                            'background': 'rgba(0,0,0,0.5)',
+                            'opacity': '0',
+                            'transition': 'opacity 0.2s'
+                        })
+                        .html('<i class="fa fa-camera" style="font-size: 14px;"></i>');
+
+                    $avatarContainer.append($avatarImg).append($avatarOverlay);
+
+                    $avatarContainer.hover(function() {
+                        $avatarOverlay.css('opacity', '1');
+                    }, function() {
+                        $avatarOverlay.css('opacity', '0');
+                    });
+
+                    var $avatarInput = $('<input type="file" name="avatars[' + c.id + ']" accept="image/*" class="d-none">');
+
+                    $avatarContainer.on('click', function() {
+                        $avatarInput.click();
+                    });
+
+                    $avatarInput.on('change', function(e) {
+                        var file = e.target.files[0];
+                        if (file) {
+                            var reader = new FileReader();
+                            reader.onload = function(evt) {
+                                c.avatarDataUrl = evt.target.result;
+                                $avatarImg.attr('src', evt.target.result);
+                            };
+                            reader.readAsDataURL(file);
+                        }
+                    });
+
                     var $input = $('<input type="text" class="form-control form-control-sm">')
                         .attr('placeholder', 'Nome do personagem...')
                         .val(c.name)
@@ -78,7 +134,7 @@ define(['jquery'], function($) {
                             renderLines();
                         });
 
-                    $li.append($input).append($delBtn);
+                    $li.append($avatarContainer).append($avatarInput).append($input).append($delBtn);
                     $charList.append($li);
                 });
 
