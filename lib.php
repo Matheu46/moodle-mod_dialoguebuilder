@@ -22,8 +22,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Adds a new dialoguebuilder instance.
  *
@@ -149,7 +147,16 @@ function dialoguebuilder_grade_item_update($dialoguebuilder, $grades = null) {
         $item['scaleid'] = -$dialoguebuilder->grade;
     }
 
-    return grade_update('mod/dialoguebuilder', $dialoguebuilder->course, 'mod', 'dialoguebuilder', $dialoguebuilder->id, 0, $grades, $item);
+    return grade_update(
+        'mod/dialoguebuilder',
+        $dialoguebuilder->course,
+        'mod',
+        'dialoguebuilder',
+        $dialoguebuilder->id,
+        0,
+        $grades,
+        $item
+    );
 }
 
 /**
@@ -207,5 +214,14 @@ function dialoguebuilder_grade_item_delete($dialoguebuilder) {
     global $CFG;
     require_once($CFG->libdir . '/gradelib.php');
 
-    return grade_update('mod/dialoguebuilder', $dialoguebuilder->course, 'mod', 'dialoguebuilder', $dialoguebuilder->id, 0, null, ['deleted' => 1]);
+    return grade_update(
+        'mod/dialoguebuilder',
+        $dialoguebuilder->course,
+        'mod',
+        'dialoguebuilder',
+        $dialoguebuilder->id,
+        0,
+        null,
+        ['deleted' => 1]
+    );
 }

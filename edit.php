@@ -54,8 +54,8 @@ if ($dialoguebuilder->timeclose > 0 && $now > $dialoguebuilder->timeclose) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'save') {
     require_sesskey();
 
-    $dialoguedata_raw = required_param('dialoguedata', PARAM_RAW);
-    $dialoguedata = json_decode($dialoguedata_raw);
+    $dialoguedataraw = required_param('dialoguedata', PARAM_RAW);
+    $dialoguedata = json_decode($dialoguedataraw);
 
     if ($dialoguedata) {
         // Find existing submission or create new.
@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'save') {
             $submission = new stdClass();
             $submission->dialoguebuilderid = $dialoguebuilder->id;
             $submission->userid = $USER->id;
-            $submission->status = 'submitted'; // or draft
+            $submission->status = 'submitted'; // Or draft.
             $submission->timecreated = time();
             $submission->timemodified = time();
             $submission->id = $DB->insert_record('dialoguebuilder_subs', $submission);
@@ -83,15 +83,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'save') {
         }
 
         // Save Characters.
-        $char_map = []; // Map frontend temp ID to DB ID.
+        $charmap = []; // Map frontend temp ID to DB ID.
         if (!empty($dialoguedata->characters)) {
             foreach ($dialoguedata->characters as $char) {
                 $newchar = new stdClass();
                 $newchar->submissionid = $submission->id;
                 $newchar->name = clean_param($char->name, PARAM_TEXT);
-                $newchar->avatar_itemid = 0; // Not implemented yet
+                $newchar->avatar_itemid = 0; // Not implemented yet.
 
-                $char_map[$char->id] = $DB->insert_record('dialoguebuilder_chars', $newchar);
+                $charmap[$char->id] = $DB->insert_record('dialoguebuilder_chars', $newchar);
             }
         }
 
@@ -99,13 +99,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'save') {
         if (!empty($dialoguedata->lines)) {
             $sortorder = 0;
             foreach ($dialoguedata->lines as $line) {
-                if (!isset($char_map[$line->characterid])) {
+                if (!isset($charmap[$line->characterid])) {
                     continue; // Character was deleted or invalid.
                 }
 
                 $newline = new stdClass();
                 $newline->submissionid = $submission->id;
-                $newline->characterid = $char_map[$line->characterid];
+                $newline->characterid = $charmap[$line->characterid];
                 $newline->text_content = clean_param($line->text, PARAM_TEXT);
                 $newline->sortorder = $sortorder++;
 
@@ -133,16 +133,16 @@ $characters = [];
 $lines = [];
 
 if ($submission) {
-    $db_chars = $DB->get_records('dialoguebuilder_chars', ['submissionid' => $submission->id]);
-    foreach ($db_chars as $c) {
+    $dbchars = $DB->get_records('dialoguebuilder_chars', ['submissionid' => $submission->id]);
+    foreach ($dbchars as $c) {
         $characters[] = [
             'id' => $c->id,
             'name' => $c->name,
         ];
     }
 
-    $db_lines = $DB->get_records('dialoguebuilder_lines', ['submissionid' => $submission->id], 'sortorder ASC');
-    foreach ($db_lines as $l) {
+    $dblines = $DB->get_records('dialoguebuilder_lines', ['submissionid' => $submission->id], 'sortorder ASC');
+    foreach ($dblines as $l) {
         $lines[] = [
             'characterid' => $l->characterid,
             'text' => $l->text_content,

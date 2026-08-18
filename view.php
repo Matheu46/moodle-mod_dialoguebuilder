@@ -62,7 +62,10 @@ if (has_capability('moodle/course:manageactivities', $context)) {
     // Teacher view.
     $submissioncount = $DB->count_records('dialoguebuilder_subs', ['dialoguebuilderid' => $dialoguebuilder->id]);
 
-    echo $OUTPUT->box("Resumo para Professores: $submissioncount alunos submeteram diálogos até o momento.", 'generalbox teacher-view-box');
+    echo $OUTPUT->box(
+        "Resumo para Professores: $submissioncount alunos submeteram diálogos até o momento.",
+        'generalbox teacher-view-box'
+    );
 
     $reporturl = new moodle_url('/mod/dialoguebuilder/report.php', ['id' => $cm->id]);
     echo $OUTPUT->single_button($reporturl, get_string('viewsubmissions', 'mod_dialoguebuilder'), 'get', ['primary' => true]);
@@ -79,12 +82,12 @@ if (has_capability('moodle/course:manageactivities', $context)) {
     if ($submission) {
         // Fetch characters to map IDs to names.
         $characters = $DB->get_records('dialoguebuilder_chars', ['submissionid' => $submission->id], 'id ASC');
-        $char_map = [];
-        $first_char_id = null;
+        $charmap = [];
+        $firstcharid = null;
         foreach ($characters as $char) {
-            $char_map[$char->id] = $char->name;
-            if ($first_char_id === null) {
-                $first_char_id = $char->id; // First character created is considered "self"
+            $charmap[$char->id] = $char->name;
+            if ($firstcharid === null) {
+                $firstcharid = $char->id; // First character created is considered "self".
             }
         }
 
@@ -93,9 +96,9 @@ if (has_capability('moodle/course:manageactivities', $context)) {
         $templatedata = ['lines' => []];
         foreach ($lines as $line) {
             $templatedata['lines'][] = [
-                'charname' => isset($char_map[$line->characterid]) ? $char_map[$line->characterid] : 'Desconhecido',
+                'charname' => isset($charmap[$line->characterid]) ? $charmap[$line->characterid] : 'Desconhecido',
                 'text' => format_text($line->text_content, FORMAT_MOODLE),
-                'is_self' => ($line->characterid == $first_char_id),
+                'is_self' => ($line->characterid == $firstcharid),
             ];
         }
 
@@ -111,14 +114,17 @@ if (has_capability('moodle/course:manageactivities', $context)) {
         echo $OUTPUT->notification(get_string('notopenyet', 'mod_dialoguebuilder', userdate($dialoguebuilder->timeopen)), 'info');
     } else if ($dialoguebuilder->timeclose > 0 && $now > $dialoguebuilder->timeclose) {
         $isopen = false;
-        echo $OUTPUT->notification(get_string('submissionsclosed', 'mod_dialoguebuilder', userdate($dialoguebuilder->timeclose)), 'warning');
+        echo $OUTPUT->notification(
+            get_string('submissionsclosed', 'mod_dialoguebuilder', userdate($dialoguebuilder->timeclose)),
+            'warning'
+        );
     }
 
     // Render a button to start/edit the dialogue only if open.
     if ($isopen) {
         $url = new moodle_url('/mod/dialoguebuilder/edit.php', ['id' => $cm->id]);
-        $btn_text = $submission ? 'Editar Diálogo' : 'Iniciar Diálogo';
-        echo $OUTPUT->single_button($url, $btn_text, 'get', ['primary' => true]);
+        $btntext = $submission ? 'Editar Diálogo' : 'Iniciar Diálogo';
+        echo $OUTPUT->single_button($url, $btntext, 'get', ['primary' => true]);
     }
 }
 

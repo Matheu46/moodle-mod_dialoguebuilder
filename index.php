@@ -39,7 +39,10 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('modulenameplural', 'mod_dialoguebuilder'));
 
 if (!$dialoguebuilders = get_all_instances_in_course('dialoguebuilder', $course)) {
-    notice(get_string('thereareno', 'moodle', get_string('modulenameplural', 'mod_dialoguebuilder')), new moodle_url('/course/view.php', ['id' => $course->id]));
+    notice(
+        get_string('thereareno', 'moodle', get_string('modulenameplural', 'mod_dialoguebuilder')),
+        new moodle_url('/course/view.php', ['id' => $course->id])
+    );
 }
 
 $table = new html_table();
@@ -63,7 +66,10 @@ $table->head[] = get_string('timeclose', 'mod_dialoguebuilder');
 $table->align[] = 'left';
 
 foreach ($dialoguebuilders as $dialoguebuilder) {
-    $link = html_writer::link(new moodle_url('/mod/dialoguebuilder/view.php', ['id' => $dialoguebuilder->coursemodule]), format_string($dialoguebuilder->name));
+    $link = html_writer::link(
+        new moodle_url('/mod/dialoguebuilder/view.php', ['id' => $dialoguebuilder->coursemodule]),
+        format_string($dialoguebuilder->name)
+    );
 
     $duedate = $dialoguebuilder->timeclose ? userdate($dialoguebuilder->timeclose) : '-';
 
