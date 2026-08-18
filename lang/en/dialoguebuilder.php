@@ -61,3 +61,10 @@ $string['timeopen'] = 'Allow submissions from';
 $string['timeclose'] = 'Due date';
 $string['notopenyet'] = 'This activity is not open for submissions yet. It will open on {$a}.';
 $string['submissionsclosed'] = 'Submissions for this activity closed on {$a}.';
+
+// Editor strings.
+$string['addcharacter'] = 'Add character';
+$string['dialoguescript'] = 'Dialogue script';
+$string['addline'] = 'Add line';
+$string['emptylinesmsg'] = 'Add characters first to be able to create lines for the script.';
+$string['savescript'] = 'Save script';

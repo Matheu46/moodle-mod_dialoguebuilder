@@ -4,14 +4,14 @@
         <div class="col-md-4">
             <div class="card mb-3">
                 <div class="card-header">
-                    <h4 class="h5 mb-0">Personagens</h4>
+                    <h4 class="h5 mb-0">{{#str}} characters, mod_dialoguebuilder {{/str}}</h4>
                 </div>
                 <div class="card-body">
                     <ul id="db-character-list" class="list-group mb-3">
                         <!-- Characters injected by JS -->
                     </ul>
                     <button id="db-add-char-btn" class="btn btn-secondary w-100">
-                        <i class="fa fa-user-plus" aria-hidden="true"></i> Adicionar Personagem
+                        <i class="fa fa-user-plus" aria-hidden="true"></i> {{#str}} addcharacter, mod_dialoguebuilder {{/str}}
                     </button>
                 </div>
             </div>
@@ -21,15 +21,15 @@
         <div class="col-md-8">
             <div class="card mb-3">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h4 class="h5 mb-0">Roteiro de Falas</h4>
+                    <h4 class="h5 mb-0">{{#str}} dialoguescript, mod_dialoguebuilder {{/str}}</h4>
                     <button id="db-add-line-btn" class="btn btn-primary btn-sm" disabled>
-                        <i class="fa fa-comment-plus" aria-hidden="true"></i> + Adicionar Fala
+                        <i class="fa fa-comment-plus" aria-hidden="true"></i> + {{#str}} addline, mod_dialoguebuilder {{/str}}
                     </button>
                 </div>
                 <div class="card-body" id="db-dialogue-lines">
                     <!-- Dialogue lines injected by JS -->
                     <div class="alert alert-info text-center" id="db-empty-lines-msg">
-                        Adicione personagens primeiro para poder criar as falas do roteiro.
+                        {{#str}} emptylinesmsg, mod_dialoguebuilder {{/str}}
                     </div>
                 </div>
             </div>
@@ -41,9 +41,9 @@
                 <input type="hidden" name="sesskey" value="{{sesskey}}">
                 <input type="hidden" name="dialoguedata" id="db-dialoguedata">
                 <div class="d-flex justify-content-end gap-2">
-                    <a href="view.php?id={{cmid}}" class="btn btn-outline-secondary">Cancelar</a>
+                    <a href="view.php?id={{cmid}}" class="btn btn-outline-secondary">{{#str}} cancel, core {{/str}}</a>
                     <button type="submit" class="btn btn-success">
-                        <i class="fa fa-save" aria-hidden="true"></i> Salvar Roteiro
+                        <i class="fa fa-save" aria-hidden="true"></i> {{#str}} savescript, mod_dialoguebuilder {{/str}}
                     </button>
                 </div>
             </form>
