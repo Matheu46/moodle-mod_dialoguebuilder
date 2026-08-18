@@ -114,7 +114,7 @@
 }
 </style>
 
-<div class="dialogue-chat-container" id="chat-container-{{uniqid}}">
+<div class="dialogue-chat-container" id="{{chatid}}">
     {{#lines}}
     <div class="chat-message {{#is_self}}self{{/is_self}}{{^is_self}}other{{/is_self}}">
         <div class="chat-bubble">
@@ -131,32 +131,64 @@
 
 {{#js}}
 require(['jquery'], function($) {
-    var container = $('#chat-container-{{uniqid}}');
+    var container = $('#{{chatid}}');
     var messages = container.find('.chat-message');
     var index = 0;
+    var currentTimeout = null;
+    var isPlaying = false;
     
     function showNextMessage() {
-        if (index >= messages.length) return;
+        if (!isPlaying) return;
+        if (index >= messages.length) {
+            isPlaying = false;
+            container.trigger('dialogue:ended');
+            return;
+        }
         
         var el = $(messages[index]);
         
-        // 1. Mostrar o balão com os 3 pontinhos digitando
         el.addClass('typing');
         container.animate({ scrollTop: container[0].scrollHeight }, 300);
         
-        // 2. Aguarda um pouco e depois mostra a mensagem real
-        setTimeout(function() {
+        currentTimeout = setTimeout(function() {
+            if (!isPlaying) return; // check again in case paused during typing
+            
             el.removeClass('typing').addClass('show');
             container.animate({ scrollTop: container[0].scrollHeight }, 300);
             
             index++;
             
-            // 3. Aguarda para iniciar a próxima mensagem
-            setTimeout(showNextMessage, 600);
-        }, 1200); // 1.2s de digitação
+            currentTimeout = setTimeout(showNextMessage, 600);
+        }, 1200);
     }
     
-    // Inicia a animação após meio segundo
-    setTimeout(showNextMessage, 500);
+    container.on('dialogue:play', function() {
+        if (isPlaying) return;
+        isPlaying = true;
+        showNextMessage();
+    });
+
+    container.on('dialogue:pause', function() {
+        isPlaying = false;
+        if (currentTimeout) {
+            clearTimeout(currentTimeout);
+            currentTimeout = null;
+        }
+    });
+
+    container.on('dialogue:replay', function() {
+        isPlaying = false;
+        if (currentTimeout) {
+            clearTimeout(currentTimeout);
+            currentTimeout = null;
+        }
+        messages.removeClass('typing show');
+        index = 0;
+        container.animate({ scrollTop: 0 }, 100);
+        
+        setTimeout(function() {
+            container.trigger('dialogue:play');
+        }, 200);
+    });
 });
 {{/js}}

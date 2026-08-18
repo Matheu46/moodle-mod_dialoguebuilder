@@ -68,3 +68,8 @@ $string['dialoguescript'] = 'Dialogue script';
 $string['addline'] = 'Add line';
 $string['emptylinesmsg'] = 'Add characters first to be able to create lines for the script.';
 $string['savescript'] = 'Save script';
+
+// Player strings.
+$string['play'] = 'Play';
+$string['pause'] = 'Pause';
+$string['replay'] = 'Replay';

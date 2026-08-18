@@ -93,7 +93,7 @@ if (has_capability('moodle/course:manageactivities', $context)) {
 
         $lines = $DB->get_records('dialoguebuilder_lines', ['submissionid' => $submission->id], 'sortorder ASC');
 
-        $templatedata = ['lines' => []];
+        $templatedata = ['lines' => [], 'chatid' => 'chat-' . uniqid()];
         foreach ($lines as $line) {
             $templatedata['lines'][] = [
                 'charname' => isset($charmap[$line->characterid]) ? $charmap[$line->characterid] : 'Desconhecido',
@@ -104,6 +104,7 @@ if (has_capability('moodle/course:manageactivities', $context)) {
 
         echo $OUTPUT->heading('Seu Diálogo', 3);
         echo $OUTPUT->render_from_template('mod_dialoguebuilder/chat_view', $templatedata);
+        echo $OUTPUT->render_from_template('mod_dialoguebuilder/player', ['chatid' => $templatedata['chatid']]);
     }
 
     // Check dates.

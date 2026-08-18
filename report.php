@@ -104,7 +104,7 @@ if ($action === 'view' && $subid) {
     if (empty($lines)) {
         echo $OUTPUT->notification("Nenhum diálogo encontrado para esta submissão.", 'info');
     } else {
-        $templatedata = ['lines' => []];
+        $templatedata = ['lines' => [], 'chatid' => 'chat-' . uniqid()];
         foreach ($lines as $line) {
             $templatedata['lines'][] = [
                 'charname' => isset($charmap[$line->characterid]) ? $charmap[$line->characterid] : 'Desconhecido',
@@ -113,6 +113,7 @@ if ($action === 'view' && $subid) {
             ];
         }
         echo $OUTPUT->render_from_template('mod_dialoguebuilder/chat_view', $templatedata);
+        echo $OUTPUT->render_from_template('mod_dialoguebuilder/player', ['chatid' => $templatedata['chatid']]);
     }
 
     // Grading form.
