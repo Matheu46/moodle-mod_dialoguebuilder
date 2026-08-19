@@ -20,6 +20,26 @@
 
     Chat template for mod_dialoguebuilder.
 
+    Example context (json):
+    {
+        "chatid": "chat-123",
+        "lines": [
+            {
+                "is_self": true,
+                "same_as_prev": false,
+                "avatarurl": "http://localhost/moodle/pix/u/f1.png",
+                "charname": "Alice",
+                "text": "Hello!"
+            },
+            {
+                "is_self": false,
+                "same_as_prev": false,
+                "avatarurl": "http://localhost/moodle/pix/u/f2.png",
+                "charname": "Bob",
+                "text": "Hi Alice, how are you?"
+            }
+        ]
+    }
 }}
 
 <div class="mod-dialoguebuilder__chat-container" id="{{chatid}}">
