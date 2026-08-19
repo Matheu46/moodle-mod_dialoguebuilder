@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<libraries>
+  <library>
+    <location>amd/src/html2canvas.js</location>
+    <name>html2canvas</name>
+    <license>MIT</license>
+    <version>1.4.1</version>
+    <licenseversion></licenseversion>
+  </library>
+</libraries>
