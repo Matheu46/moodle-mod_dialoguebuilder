@@ -5,7 +5,11 @@
  * @copyright  2026 Matheus Mathias
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['core/str'], function(str) {
+define(['core/str', 'core/emoji/picker'], function(str, EmojiPicker) {
+
+    if (EmojiPicker && EmojiPicker.default) {
+        EmojiPicker = EmojiPicker.default;
+    }
 
     return {
         /**
@@ -63,6 +67,34 @@ define(['core/str'], function(str) {
                 var addLineBtn = document.getElementById('mod-dialoguebuilder__add-line-btn');
                 var submitForm = document.getElementById('mod-dialoguebuilder__submit-form');
                 var dataInput = document.getElementById('mod-dialoguebuilder__dialoguedata');
+
+                var activeTextarea = null;
+                var emojiPickerContainer = document.getElementById('mod-dialoguebuilder__emoji-picker-container');
+
+                if (emojiPickerContainer) {
+                    EmojiPicker(emojiPickerContainer, function(emoji) {
+                        if (activeTextarea) {
+                            var startPos = activeTextarea.selectionStart;
+                            var endPos = activeTextarea.selectionEnd;
+                            var text = activeTextarea.value;
+                            activeTextarea.value = text.substring(0, startPos) + emoji + text.substring(endPos);
+
+                            activeTextarea.focus();
+                            // Trigger change to update state
+                            activeTextarea.dispatchEvent(new Event('change'));
+                        }
+                        emojiPickerContainer.classList.add('d-none');
+                    });
+
+                    // Close emoji picker when clicking outside
+                    document.addEventListener('click', function(e) {
+                        if (!emojiPickerContainer.classList.contains('d-none')) {
+                            if (!emojiPickerContainer.contains(e.target) && !e.target.closest('.emoji-toggle-btn')) {
+                                emojiPickerContainer.classList.add('d-none');
+                            }
+                        }
+                    });
+                }
 
                 /**
                  * Renders the characters list.
@@ -240,16 +272,46 @@ define(['core/str'], function(str) {
                         colSelect.appendChild(select);
 
                         var colText = document.createElement('div');
-                        colText.className = 'col-md-8';
+                        colText.className = 'col-md-8 position-relative';
+
                         var textarea = document.createElement('textarea');
-                        textarea.className = 'form-control';
+                        textarea.className = 'form-control pe-5'; // Add padding to avoid text overlapping the button
                         textarea.rows = 2;
                         textarea.placeholder = langStrings.writelineplaceholder;
                         textarea.value = line.text || '';
                         textarea.addEventListener('change', function(e) {
                             line.text = e.target.value;
                         });
+
+                        var toggleBtn = document.createElement('button');
+                        toggleBtn.type = 'button';
+                        toggleBtn.className = 'btn btn-link btn-sm position-absolute emoji-toggle-btn text-decoration-none';
+                        toggleBtn.style.bottom = '5px';
+                        toggleBtn.style.right = '20px';
+                        toggleBtn.innerHTML = '<i class="fa fa-smile-o" style="font-size: 1.2rem; color: #6c757d;"></i>';
+                        toggleBtn.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            if (activeTextarea === textarea && !emojiPickerContainer.classList.contains('d-none')) {
+                                emojiPickerContainer.classList.add('d-none');
+                            } else {
+                                activeTextarea = textarea;
+                                emojiPickerContainer.classList.remove('d-none');
+
+                                var wrapper = document.getElementById('mod-dialoguebuilder__editor-' + cmid);
+                                var btnRect = toggleBtn.getBoundingClientRect();
+                                var wrapperRect = wrapper.getBoundingClientRect();
+
+                                emojiPickerContainer.style.top = (btnRect.bottom - wrapperRect.top + 5) + 'px';
+                                var leftPos = btnRect.right - wrapperRect.left - 350; // default to right align
+                                if (leftPos < 0) {
+                                    leftPos = 15;
+                                }
+                                emojiPickerContainer.style.left = leftPos + 'px';
+                            }
+                        });
+
                         colText.appendChild(textarea);
+                        colText.appendChild(toggleBtn);
 
                         var colDel = document.createElement('div');
                         colDel.className = 'col-md-1';
