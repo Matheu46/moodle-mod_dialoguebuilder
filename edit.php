@@ -223,7 +223,7 @@ $templatedata = [
 ];
 
 // Require the AMD module.
-$PAGE->requires->js_call_amd('mod_dialoguebuilder/editor', 'init', [$cm->id, $initialdata]);
+$PAGE->requires->js_call_amd('mod_dialoguebuilder/editor', 'init', [$cm->id]);
 
 // Output the page.
 echo $OUTPUT->header();

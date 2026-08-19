@@ -12,9 +12,11 @@ define(['core/str'], function(str) {
          * Initialize the editor.
          *
          * @param {Number} cmid The course module ID.
-         * @param {String} initialDataJson The initial JSON data.
          */
-        init: function(cmid, initialDataJson) {
+        init: function(cmid) {
+            var wrapper = document.getElementById('mod-dialoguebuilder__editor-' + cmid);
+            var initialDataJson = wrapper ? wrapper.getAttribute('data-initialdata') : null;
+
             str.get_strings([
                 {key: 'changeavatar', component: 'mod_dialoguebuilder'},
                 {key: 'characternameplaceholder', component: 'mod_dialoguebuilder'},
