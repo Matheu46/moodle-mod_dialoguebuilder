@@ -68,6 +68,11 @@ $string['dialoguescript'] = 'Dialogue script';
 $string['addline'] = 'Add line';
 $string['emptylinesmsg'] = 'Add characters first to be able to create lines for the script.';
 $string['savescript'] = 'Save script';
+$string['changeavatar'] = 'Click to change picture';
+$string['characternameplaceholder'] = 'Character name...';
+$string['unnamed'] = 'Unnamed';
+$string['writelineplaceholder'] = 'Write the line here...';
+$string['character'] = 'Character';
 
 // Player strings.
 $string['play'] = 'Play';
