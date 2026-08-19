@@ -1,142 +1,25 @@
-<style>
-.dialogue-chat-container {
-    max-width: 600px;
-    height: 500px;
-    overflow-y: auto;
-    margin: 20px auto;
-    background-color: #e5ddd5;
-    border-radius: 10px;
-    padding: 20px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    font-family: 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    background-image: url('data:image/svg+xml;utf8,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><g fill="%23d8cfc5" fill-opacity="0.4"><path d="M10 10h10v10H10zM30 30h10v10H30zM50 10h10v10H50zM70 30h10v10H70zM10 50h10v10H10zM30 70h10v10H30zM50 50h10v10H50zM70 70h10v10H70z"/></g></svg>');
-    
-    /* Custom Scrollbar */
-    scrollbar-width: thin;
-    scrollbar-color: rgba(0,0,0,0.2) transparent;
-}
-.dialogue-chat-container::-webkit-scrollbar {
-    width: 6px;
-}
-.dialogue-chat-container::-webkit-scrollbar-thumb {
-    background: rgba(0,0,0,0.2);
-    border-radius: 3px;
-}
-
-.chat-message {
-    max-width: 80%;
-    display: none; /* Hide from flow initially so scrollHeight starts small */
-    flex-direction: row;
-    align-items: flex-end;
-}
-.chat-message.typing, .chat-message.show {
-    display: flex;
-    animation: popIn 0.3s ease-out forwards;
-}
-
-@keyframes popIn {
-    0% { opacity: 0; transform: translateY(10px); }
-    100% { opacity: 1; transform: translateY(0); }
-}
-
-.chat-message.self {
-    align-self: flex-end;
-}
-.chat-message.other {
-    align-self: flex-start;
-}
-.chat-bubble {
-    padding: 8px 12px;
-    border-radius: 10px;
-    position: relative;
-    box-shadow: 0 1px 1px rgba(0,0,0,0.1);
-    font-size: 15px;
-    line-height: 1.4;
-    word-wrap: break-word;
-}
-.chat-message.self .chat-bubble {
-    background-color: #dcf8c6;
-    border-top-right-radius: 0;
-}
-.chat-message.other .chat-bubble {
-    background-color: #ffffff;
-    border-top-left-radius: 0;
-}
-.chat-author {
-    font-size: 13px;
-    font-weight: bold;
-    margin-bottom: 3px;
-    color: #128C7E;
-}
-.chat-message.self .chat-author {
-    display: none;
-}
-.chat-text p {
-    margin: 0;
-}
-
-/* Typing Indicator Styles */
-.chat-typing {
-    display: none;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
-    padding: 4px 2px;
-}
-.chat-message.typing .chat-typing {
-    display: flex;
-}
-.chat-message.typing .chat-text {
-    display: none;
-}
-.chat-message.show .chat-typing {
-    display: none;
-}
-.chat-message.show .chat-text {
-    display: block;
-}
-
-.chat-typing span {
-    width: 6px;
-    height: 6px;
-    background-color: #999;
-    border-radius: 50%;
-    animation: bounce 1.4s infinite ease-in-out both;
-}
-.chat-typing span:nth-child(1) { animation-delay: -0.32s; }
-.chat-typing span:nth-child(2) { animation-delay: -0.16s; }
-
-@keyframes bounce {
-    0%, 80%, 100% { transform: scale(0); }
-    40% { transform: scale(1); }
-}
-</style>
-
-<div class="dialogue-chat-container" id="{{chatid}}">
+<div class="mod-dialoguebuilder__chat-container" id="{{chatid}}">
     {{#lines}}
-    <div class="chat-message {{#is_self}}self{{/is_self}}{{^is_self}}other{{/is_self}}">
+    <div class="mod-dialoguebuilder__chat-message {{#is_self}}mod-dialoguebuilder__self{{/is_self}}{{^is_self}}mod-dialoguebuilder__other{{/is_self}}">
         {{#avatarurl}}
-            <img src="{{avatarurl}}" alt="{{charname}}" class="chat-avatar flex-shrink-0 {{#is_self}}order-2 ms-2{{/is_self}}{{^is_self}}me-2{{/is_self}}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
+            <img src="{{avatarurl}}" alt="{{charname}}" class="mod-dialoguebuilder__avatar flex-shrink-0 {{#is_self}}order-2 ms-2{{/is_self}}{{^is_self}}me-2{{/is_self}}">
         {{/avatarurl}}
-        <div class="chat-bubble">
-            {{^is_self}}<div class="chat-author">{{charname}}</div>{{/is_self}}
-            <div class="chat-typing"><span></span><span></span><span></span></div>
-            <div class="chat-text">{{{text}}}</div>
+        <div class="mod-dialoguebuilder__chat-bubble">
+            <div class="mod-dialoguebuilder__chat-author">{{charname}}</div>
+            <div class="mod-dialoguebuilder__chat-typing"><span></span><span></span><span></span></div>
+            <div class="mod-dialoguebuilder__chat-text">{{{text}}}</div>
         </div>
     </div>
     {{/lines}}
     {{^lines}}
-        <div class="alert alert-info" style="text-align:center;">Nenhuma fala registrada ainda.</div>
+        <div class="alert alert-info text-center">Nenhuma fala registrada ainda.</div>
     {{/lines}}
 </div>
 
 {{#js}}
 require(['jquery'], function($) {
     var container = $('#{{chatid}}');
-    var messages = container.find('.chat-message');
+    var messages = container.find('.mod-dialoguebuilder__chat-message');
     var index = 0;
     var currentTimeout = null;
     var isPlaying = false;
@@ -151,13 +34,13 @@ require(['jquery'], function($) {
         
         var el = $(messages[index]);
         
-        el.addClass('typing');
+        el.addClass('mod-dialoguebuilder__typing');
         container.animate({ scrollTop: container[0].scrollHeight }, 300);
         
         currentTimeout = setTimeout(function() {
             if (!isPlaying) return; // check again in case paused during typing
             
-            el.removeClass('typing').addClass('show');
+            el.removeClass('mod-dialoguebuilder__typing').addClass('mod-dialoguebuilder__show');
             container.animate({ scrollTop: container[0].scrollHeight }, 300);
             
             index++;
@@ -186,7 +69,7 @@ require(['jquery'], function($) {
             clearTimeout(currentTimeout);
             currentTimeout = null;
         }
-        messages.removeClass('typing show');
+        messages.removeClass('mod-dialoguebuilder__typing mod-dialoguebuilder__show');
         index = 0;
         container.animate({ scrollTop: 0 }, 100);
         

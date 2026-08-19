@@ -55,12 +55,12 @@ define(['jquery', 'core/str'], function($, str) {
                     }
                 }
 
-                var $charList = $('#db-character-list');
-                var $linesContainer = $('#db-dialogue-lines');
-                var $emptyMsg = $('#db-empty-lines-msg');
-                var $addLineBtn = $('#db-add-line-btn');
-                var $submitForm = $('#db-submit-form');
-                var $dataInput = $('#db-dialoguedata');
+                var $charList = $('#mod-dialoguebuilder__character-list');
+                var $linesContainer = $('#mod-dialoguebuilder__dialogue-lines');
+                var $emptyMsg = $('#mod-dialoguebuilder__empty-lines-msg');
+                var $addLineBtn = $('#mod-dialoguebuilder__add-line-btn');
+                var $submitForm = $('#mod-dialoguebuilder__submit-form');
+                var $dataInput = $('#mod-dialoguebuilder__dialoguedata');
 
                 /**
                  * Renders the characters list.
@@ -187,7 +187,7 @@ define(['jquery', 'core/str'], function($, str) {
                  * Renders the lines list.
                  */
                 function renderLines() {
-                    $linesContainer.find('.db-line-item').remove();
+                    $linesContainer.find('.mod-dialoguebuilder__line-item').remove();
 
                     if (lines.length > 0) {
                         $emptyMsg.hide();
@@ -196,7 +196,7 @@ define(['jquery', 'core/str'], function($, str) {
                     }
 
                     lines.forEach(function(line, index) {
-                        var $row = $('<div class="db-line-item row mb-2 align-items-start"></div>');
+                        var $row = $('<div class="mod-dialoguebuilder__line-item row mb-2 align-items-start"></div>');
 
                         var $colSelect = $('<div class="col-md-3"></div>');
                         var $select = $('<select class="form-control form-control-sm char-select"></select>');
@@ -236,7 +236,7 @@ define(['jquery', 'core/str'], function($, str) {
                     });
                 }
 
-                $('#db-add-char-btn').on('click', function(e) {
+                $('#mod-dialoguebuilder__add-char-btn').on('click', function(e) {
                     e.preventDefault();
                     characters.push({
                         id: charIdCounter++,
@@ -246,7 +246,7 @@ define(['jquery', 'core/str'], function($, str) {
                     renderLines();
                 });
 
-                $('#db-add-line-btn').on('click', function(e) {
+                $('#mod-dialoguebuilder__add-line-btn').on('click', function(e) {
                     e.preventDefault();
                     if (characters.length > 0) {
                         lines.push({

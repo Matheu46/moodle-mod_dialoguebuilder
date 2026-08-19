@@ -1,9 +1,9 @@
-<div class="dialoguebuilder-editor-wrapper" id="dialoguebuilder-editor-{{cmid}}">
-    <form action="edit.php" method="POST" id="db-submit-form" enctype="multipart/form-data">
+<div class="mod-dialoguebuilder__editor-wrapper" id="mod-dialoguebuilder__editor-{{cmid}}">
+    <form action="edit.php" method="POST" id="mod-dialoguebuilder__submit-form" enctype="multipart/form-data">
         <input type="hidden" name="id" value="{{cmid}}">
         <input type="hidden" name="action" value="save">
         <input type="hidden" name="sesskey" value="{{sesskey}}">
-        <input type="hidden" name="dialoguedata" id="db-dialoguedata">
+        <input type="hidden" name="dialoguedata" id="mod-dialoguebuilder__dialoguedata">
 
         <div class="row">
         <!-- Sidebar for Characters -->
@@ -13,10 +13,10 @@
                     <h4 class="h5 mb-0">{{#str}} characters, mod_dialoguebuilder {{/str}}</h4>
                 </div>
                 <div class="card-body">
-                    <ul id="db-character-list" class="list-group mb-3">
+                    <ul id="mod-dialoguebuilder__character-list" class="list-group mb-3">
                         <!-- Characters injected by JS -->
                     </ul>
-                    <button id="db-add-char-btn" class="btn btn-secondary w-100">
+                    <button id="mod-dialoguebuilder__add-char-btn" class="btn btn-secondary w-100">
                         <i class="fa fa-user-plus" aria-hidden="true"></i> {{#str}} addcharacter, mod_dialoguebuilder {{/str}}
                     </button>
                 </div>
@@ -28,13 +28,13 @@
             <div class="card mb-3">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h4 class="h5 mb-0">{{#str}} dialoguescript, mod_dialoguebuilder {{/str}}</h4>
-                    <button id="db-add-line-btn" class="btn btn-primary btn-sm" disabled>
+                    <button id="mod-dialoguebuilder__add-line-btn" class="btn btn-primary btn-sm" disabled>
                         <i class="fa fa-comment-plus" aria-hidden="true"></i> + {{#str}} addline, mod_dialoguebuilder {{/str}}
                     </button>
                 </div>
-                <div class="card-body" id="db-dialogue-lines">
+                <div class="card-body" id="mod-dialoguebuilder__dialogue-lines">
                     <!-- Dialogue lines injected by JS -->
-                    <div class="alert alert-info text-center" id="db-empty-lines-msg">
+                    <div class="alert alert-info text-center" id="mod-dialoguebuilder__empty-lines-msg">
                         {{#str}} emptylinesmsg, mod_dialoguebuilder {{/str}}
                     </div>
                 </div>

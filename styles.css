@@ -1,0 +1,157 @@
+/* This file is part of Moodle - http://moodle.org/
+ *
+ * Moodle is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Moodle is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/**
+ * Styles for mod_dialoguebuilder.
+ *
+ * @package    mod_dialoguebuilder
+ * @copyright  2026 Matheus Mathias
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+/* Player & Chat View */
+
+.mod-dialoguebuilder__chat-container {
+    max-width: 600px;
+    height: 500px;
+    overflow-y: auto;
+    margin: 20px auto;
+    background-color: #e5ddd5;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    font-family: 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    background-image: url('data:image/svg+xml;utf8,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><g fill="%23d8cfc5" fill-opacity="0.4"><path d="M10 10h10v10H10zM30 30h10v10H30zM50 10h10v10H50zM70 30h10v10H70zM10 50h10v10H10zM30 70h10v10H30zM50 50h10v10H50zM70 70h10v10H70z"/></g></svg>');
+    
+    /* Custom Scrollbar */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0,0,0,0.2) transparent;
+}
+.mod-dialoguebuilder__chat-container::-webkit-scrollbar {
+    width: 6px;
+}
+.mod-dialoguebuilder__chat-container::-webkit-scrollbar-thumb {
+    background: rgba(0,0,0,0.2);
+    border-radius: 3px;
+}
+
+.mod-dialoguebuilder__chat-message {
+    max-width: 80%;
+    display: none; /* Hide from flow initially so scrollHeight starts small */
+    flex-direction: row;
+    align-items: flex-start;
+}
+.mod-dialoguebuilder__chat-message.mod-dialoguebuilder__typing, 
+.mod-dialoguebuilder__chat-message.mod-dialoguebuilder__show {
+    display: flex;
+    animation: mod-dialoguebuilder-popIn 0.3s ease-out forwards;
+}
+
+@keyframes mod-dialoguebuilder-popIn {
+    0% { opacity: 0; transform: translateY(10px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+.mod-dialoguebuilder__chat-message.mod-dialoguebuilder__self {
+    align-self: flex-end;
+}
+.mod-dialoguebuilder__chat-message.mod-dialoguebuilder__other {
+    align-self: flex-start;
+}
+
+.mod-dialoguebuilder__chat-bubble {
+    padding: 8px 12px;
+    border-radius: 10px;
+    position: relative;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+    font-size: 15px;
+    line-height: 1.4;
+    word-wrap: break-word;
+}
+.mod-dialoguebuilder__chat-message.mod-dialoguebuilder__self .mod-dialoguebuilder__chat-bubble {
+    background-color: #dcf8c6;
+    border-top-right-radius: 0;
+}
+.mod-dialoguebuilder__chat-message.mod-dialoguebuilder__other .mod-dialoguebuilder__chat-bubble {
+    background-color: #ffffff;
+    border-top-left-radius: 0;
+}
+
+.mod-dialoguebuilder__chat-author {
+    font-size: 13px;
+    font-weight: bold;
+    margin-bottom: 3px;
+    color: #128C7E;
+}
+.mod-dialoguebuilder__chat-message.mod-dialoguebuilder__self .mod-dialoguebuilder__chat-author {
+    text-align: right;
+    color: #075E54;
+}
+
+.mod-dialoguebuilder__chat-text p {
+    margin: 0;
+}
+
+/* Typing Indicator Styles */
+.mod-dialoguebuilder__chat-typing {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 4px 2px;
+}
+.mod-dialoguebuilder__chat-message.mod-dialoguebuilder__typing .mod-dialoguebuilder__chat-typing {
+    display: flex;
+}
+.mod-dialoguebuilder__chat-message.mod-dialoguebuilder__typing .mod-dialoguebuilder__chat-text {
+    display: none;
+}
+.mod-dialoguebuilder__chat-message.mod-dialoguebuilder__show .mod-dialoguebuilder__chat-typing {
+    display: none;
+}
+.mod-dialoguebuilder__chat-message.mod-dialoguebuilder__show .mod-dialoguebuilder__chat-text {
+    display: block;
+}
+
+.mod-dialoguebuilder__chat-typing span {
+    width: 6px;
+    height: 6px;
+    background-color: #999;
+    border-radius: 50%;
+    animation: mod-dialoguebuilder-bounce 1.4s infinite ease-in-out both;
+}
+.mod-dialoguebuilder__chat-typing span:nth-child(1) { animation-delay: -0.32s; }
+.mod-dialoguebuilder__chat-typing span:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes mod-dialoguebuilder-bounce {
+    0%, 80%, 100% { transform: scale(0); }
+    40% { transform: scale(1); }
+}
+
+.mod-dialoguebuilder__avatar {
+    width: 40px; 
+    height: 40px; 
+    border-radius: 50%; 
+    object-fit: cover;
+}
+
+/* Editor Styles */
+.mod-dialoguebuilder__editor-wrapper {
+    /* Optional editor wrapper styles */
+}

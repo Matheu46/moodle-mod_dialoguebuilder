@@ -1,8 +1,8 @@
-<div class="dialogue-player-controls text-center mb-3" data-target="{{chatid}}">
+<div class="mod-dialoguebuilder__player-controls text-center mb-3" data-target="{{chatid}}">
     <div class="btn-group" role="group">
-        <button class="btn btn-primary db-play-btn"><i class="fa fa-play" aria-hidden="true"></i> {{#str}} play, mod_dialoguebuilder {{/str}}</button>
-        <button class="btn btn-secondary db-pause-btn" disabled><i class="fa fa-pause" aria-hidden="true"></i> {{#str}} pause, mod_dialoguebuilder {{/str}}</button>
-        <button class="btn btn-outline-secondary db-replay-btn" disabled><i class="fa fa-refresh" aria-hidden="true"></i> {{#str}} replay, mod_dialoguebuilder {{/str}}</button>
+        <button class="btn btn-primary mod-dialoguebuilder__play-btn"><i class="fa fa-play" aria-hidden="true"></i> {{#str}} play, mod_dialoguebuilder {{/str}}</button>
+        <button class="btn btn-secondary mod-dialoguebuilder__pause-btn" disabled><i class="fa fa-pause" aria-hidden="true"></i> {{#str}} pause, mod_dialoguebuilder {{/str}}</button>
+        <button class="btn btn-outline-secondary mod-dialoguebuilder__replay-btn" disabled><i class="fa fa-refresh" aria-hidden="true"></i> {{#str}} replay, mod_dialoguebuilder {{/str}}</button>
     </div>
 </div>
 
@@ -10,9 +10,9 @@
 require(['jquery'], function($) {
     var controls = $('div[data-target="{{chatid}}"]');
     var target = $('#{{chatid}}');
-    var playBtn = controls.find('.db-play-btn');
-    var pauseBtn = controls.find('.db-pause-btn');
-    var replayBtn = controls.find('.db-replay-btn');
+    var playBtn = controls.find('.mod-dialoguebuilder__play-btn');
+    var pauseBtn = controls.find('.mod-dialoguebuilder__pause-btn');
+    var replayBtn = controls.find('.mod-dialoguebuilder__replay-btn');
 
     playBtn.on('click', function() {
         playBtn.prop('disabled', true);
