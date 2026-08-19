@@ -2,10 +2,10 @@
  * Editor JS module for dialoguebuilder.
  *
  * @module     mod_dialoguebuilder/editor
- * @copyright  2026 Matheus
+ * @copyright  2026 Matheus Mathias
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'core/str'], function($, str) {
+define(['core/str'], function(str) {
 
     return {
         /**
@@ -55,113 +55,126 @@ define(['jquery', 'core/str'], function($, str) {
                     }
                 }
 
-                var $charList = $('#mod-dialoguebuilder__character-list');
-                var $linesContainer = $('#mod-dialoguebuilder__dialogue-lines');
-                var $emptyMsg = $('#mod-dialoguebuilder__empty-lines-msg');
-                var $addLineBtn = $('#mod-dialoguebuilder__add-line-btn');
-                var $submitForm = $('#mod-dialoguebuilder__submit-form');
-                var $dataInput = $('#mod-dialoguebuilder__dialoguedata');
+                var charList = document.getElementById('mod-dialoguebuilder__character-list');
+                var linesContainer = document.getElementById('mod-dialoguebuilder__dialogue-lines');
+                var emptyMsg = document.getElementById('mod-dialoguebuilder__empty-lines-msg');
+                var addLineBtn = document.getElementById('mod-dialoguebuilder__add-line-btn');
+                var submitForm = document.getElementById('mod-dialoguebuilder__submit-form');
+                var dataInput = document.getElementById('mod-dialoguebuilder__dialoguedata');
 
                 /**
                  * Renders the characters list.
                  */
                 function renderCharacters() {
-                    $charList.empty();
+                    charList.innerHTML = '';
                     characters.forEach(function(c) {
-                        var $li = $('<li class="list-group-item d-flex gap-2 align-items-center"></li>');
+                        var li = document.createElement('li');
+                        li.className = 'list-group-item d-flex gap-2 align-items-center';
 
                         // Avatar wrapper
                         var avatarSrc = c.avatarDataUrl || c.avatarurl || M.util.image_url('u/f2');
-                        var $avatarContainer = $('<div></div>')
-                            .addClass('position-relative d-inline-block')
-                            .css({
-                                'width': '40px',
-                                'height': '40px',
-                                'cursor': 'pointer'
-                            })
-                            .attr('title', langStrings.changeavatar);
+                        var avatarContainer = document.createElement('div');
+                        avatarContainer.className = 'position-relative d-inline-block';
+                        avatarContainer.style.width = '40px';
+                        avatarContainer.style.height = '40px';
+                        avatarContainer.style.cursor = 'pointer';
+                        avatarContainer.setAttribute('title', langStrings.changeavatar);
 
-                        var $avatarImg = $('<img>')
-                            .addClass('rounded-circle')
-                            .css({
-                                'width': '100%',
-                                'height': '100%',
-                                'object-fit': 'cover'
-                            })
-                            .attr('src', avatarSrc);
+                        var avatarImg = document.createElement('img');
+                        avatarImg.className = 'rounded-circle';
+                        avatarImg.style.width = '100%';
+                        avatarImg.style.height = '100%';
+                        avatarImg.style.objectFit = 'cover';
+                        avatarImg.src = avatarSrc;
 
-                        var $avatarOverlay = $('<div></div>')
-                            .addClass('position-absolute d-flex align-items-center')
-                            .addClass('justify-content-center text-white rounded-circle')
-                            .css({
-                                'top': '0', 'left': '0', 'right': '0', 'bottom': '0',
-                                'background': 'rgba(0,0,0,0.5)',
-                                'opacity': '0',
-                                'transition': 'opacity 0.2s'
-                            })
-                            .html('<i class="fa fa-camera" style="font-size: 14px;"></i>');
+                        var avatarOverlay = document.createElement('div');
+                        avatarOverlay.className = 'position-absolute d-flex align-items-center ' +
+                            'justify-content-center text-white rounded-circle';
+                        avatarOverlay.style.top = '0';
+                        avatarOverlay.style.left = '0';
+                        avatarOverlay.style.right = '0';
+                        avatarOverlay.style.bottom = '0';
+                        avatarOverlay.style.background = 'rgba(0,0,0,0.5)';
+                        avatarOverlay.style.opacity = '0';
+                        avatarOverlay.style.transition = 'opacity 0.2s';
+                        avatarOverlay.innerHTML = '<i class="fa fa-camera" style="font-size: 14px;"></i>';
 
-                        $avatarContainer.append($avatarImg).append($avatarOverlay);
+                        avatarContainer.appendChild(avatarImg);
+                        avatarContainer.appendChild(avatarOverlay);
 
-                        $avatarContainer.hover(function() {
-                            $avatarOverlay.css('opacity', '1');
-                        }, function() {
-                            $avatarOverlay.css('opacity', '0');
+                        avatarContainer.addEventListener('mouseenter', function() {
+                            avatarOverlay.style.opacity = '1';
+                        });
+                        avatarContainer.addEventListener('mouseleave', function() {
+                            avatarOverlay.style.opacity = '0';
                         });
 
-                        var $avatarInput = $('<input type="file" name="avatars[' + c.id + ']" accept="image/*" class="d-none">');
+                        var avatarInput = document.createElement('input');
+                        avatarInput.type = 'file';
+                        avatarInput.name = 'avatars[' + c.id + ']';
+                        avatarInput.accept = 'image/*';
+                        avatarInput.className = 'd-none';
 
-                        $avatarContainer.on('click', function() {
-                            $avatarInput.click();
+                        avatarContainer.addEventListener('click', function() {
+                            avatarInput.click();
                         });
 
-                        $avatarInput.on('change', function(e) {
+                        avatarInput.addEventListener('change', function(e) {
                             var file = e.target.files[0];
                             if (file) {
                                 var reader = new FileReader();
                                 reader.onload = function(evt) {
                                     c.avatarDataUrl = evt.target.result;
-                                    $avatarImg.attr('src', evt.target.result);
+                                    avatarImg.src = evt.target.result;
                                 };
                                 reader.readAsDataURL(file);
                             }
                         });
 
-                        var $input = $('<input type="text" class="form-control form-control-sm">')
-                            .attr('placeholder', langStrings.characternameplaceholder)
-                            .val(c.name)
-                            .on('change keyup', function() {
-                                c.name = $(this).val();
-                                updateSelects(); // update names in selects without re-rendering everything
-                            });
+                        var input = document.createElement('input');
+                        input.type = 'text';
+                        input.className = 'form-control form-control-sm';
+                        input.placeholder = langStrings.characternameplaceholder;
+                        input.value = c.name || '';
 
-                        var delBtnHTML = '<button type="button" class="btn btn-sm btn-outline-danger">' +
-                            '<i class="fa fa-trash"></i></button>';
-                        var $delBtn = $(delBtnHTML)
-                            .on('click', function() {
-                                // Remove character and their lines
-                                characters = characters.filter(function(char) {
-                                    return char.id !== c.id;
-                                });
-                                lines = lines.filter(function(l) {
-                                    return l.characterid !== c.id;
-                                });
-                                renderCharacters();
-                                renderLines();
-                            });
+                        var updateName = function(e) {
+                            c.name = e.target.value;
+                            updateSelects(); // update names in selects without re-rendering everything
+                        };
+                        input.addEventListener('change', updateName);
+                        input.addEventListener('keyup', updateName);
 
-                        $li.append($avatarContainer).append($avatarInput).append($input).append($delBtn);
-                        $charList.append($li);
+                        var delBtn = document.createElement('button');
+                        delBtn.type = 'button';
+                        delBtn.className = 'btn btn-sm btn-outline-danger';
+                        delBtn.innerHTML = '<i class="fa fa-trash"></i>';
+                        delBtn.addEventListener('click', function() {
+                            // Remove character and their lines
+                            characters = characters.filter(function(char) {
+                                return char.id !== c.id;
+                            });
+                            lines = lines.filter(function(l) {
+                                return l.characterid !== c.id;
+                            });
+                            renderCharacters();
+                            renderLines();
+                        });
+
+                        li.appendChild(avatarContainer);
+                        li.appendChild(avatarInput);
+                        li.appendChild(input);
+                        li.appendChild(delBtn);
+                        charList.appendChild(li);
                     });
 
                     if (characters.length > 0) {
-                        $addLineBtn.prop('disabled', false);
+                        addLineBtn.disabled = false;
                         if (lines.length === 0) {
-                            $emptyMsg.show();
+                            emptyMsg.style.display = '';
                         }
                     } else {
-                        $addLineBtn.prop('disabled', true);
-                        $emptyMsg.show();
+                        addLineBtn.disabled = true;
+                        emptyMsg.style.display = '';
                     }
                 }
 
@@ -169,16 +182,18 @@ define(['jquery', 'core/str'], function($, str) {
                  * Updates the options in character selects.
                  */
                 function updateSelects() {
-                    $linesContainer.find('select.char-select').each(function() {
-                        var $select = $(this);
-                        var selectedVal = parseInt($select.val(), 10);
-                        $select.empty();
+                    var selects = linesContainer.querySelectorAll('select.char-select');
+                    selects.forEach(function(select) {
+                        var selectedVal = parseInt(select.value, 10);
+                        select.innerHTML = '';
                         characters.forEach(function(c) {
-                            var $opt = $('<option></option>').attr('value', c.id).text(c.name || langStrings.unnamed);
+                            var opt = document.createElement('option');
+                            opt.value = c.id;
+                            opt.textContent = c.name || langStrings.unnamed;
                             if (c.id === selectedVal) {
-                                $opt.prop('selected', true);
+                                opt.selected = true;
                             }
-                            $select.append($opt);
+                            select.appendChild(opt);
                         });
                     });
                 }
@@ -187,56 +202,73 @@ define(['jquery', 'core/str'], function($, str) {
                  * Renders the lines list.
                  */
                 function renderLines() {
-                    $linesContainer.find('.mod-dialoguebuilder__line-item').remove();
+                    var lineItems = linesContainer.querySelectorAll('.mod-dialoguebuilder__line-item');
+                    lineItems.forEach(function(item) {
+                        item.remove();
+                    });
 
                     if (lines.length > 0) {
-                        $emptyMsg.hide();
+                        emptyMsg.style.display = 'none';
                     } else if (characters.length > 0) {
-                        $emptyMsg.show();
+                        emptyMsg.style.display = '';
                     }
 
                     lines.forEach(function(line, index) {
-                        var $row = $('<div class="mod-dialoguebuilder__line-item row mb-2 align-items-start"></div>');
+                        var row = document.createElement('div');
+                        row.className = 'mod-dialoguebuilder__line-item row mb-2 align-items-start';
 
-                        var $colSelect = $('<div class="col-md-3"></div>');
-                        var $select = $('<select class="form-control form-control-sm char-select"></select>');
+                        var colSelect = document.createElement('div');
+                        colSelect.className = 'col-md-3';
+                        var select = document.createElement('select');
+                        select.className = 'form-control form-control-sm char-select';
+
                         characters.forEach(function(c) {
-                            var $opt = $('<option></option>').attr('value', c.id).text(c.name || langStrings.unnamed);
+                            var opt = document.createElement('option');
+                            opt.value = c.id;
+                            opt.textContent = c.name || langStrings.unnamed;
                             if (c.id === line.characterid) {
-                                $opt.prop('selected', true);
+                                opt.selected = true;
                             }
-                            $select.append($opt);
+                            select.appendChild(opt);
                         });
-                        $select.on('change', function() {
-                            line.characterid = parseInt($(this).val(), 10);
+
+                        select.addEventListener('change', function(e) {
+                            line.characterid = parseInt(e.target.value, 10);
                         });
-                        $colSelect.append($select);
+                        colSelect.appendChild(select);
 
-                        var $colText = $('<div class="col-md-8"></div>');
-                        var $textarea = $('<textarea class="form-control" rows="2"></textarea>')
-                            .attr('placeholder', langStrings.writelineplaceholder)
-                            .val(line.text)
-                            .on('change', function() {
-                                line.text = $(this).val();
-                            });
-                        $colText.append($textarea);
+                        var colText = document.createElement('div');
+                        colText.className = 'col-md-8';
+                        var textarea = document.createElement('textarea');
+                        textarea.className = 'form-control';
+                        textarea.rows = 2;
+                        textarea.placeholder = langStrings.writelineplaceholder;
+                        textarea.value = line.text || '';
+                        textarea.addEventListener('change', function(e) {
+                            line.text = e.target.value;
+                        });
+                        colText.appendChild(textarea);
 
-                        var $colDel = $('<div class="col-md-1"></div>');
-                        var delBtnHTML = '<button type="button" class="btn btn-sm btn-outline-danger w-100">' +
-                            '<i class="fa fa-times"></i></button>';
-                        var $delBtn = $(delBtnHTML)
-                            .on('click', function() {
-                                lines.splice(index, 1);
-                                renderLines();
-                            });
-                        $colDel.append($delBtn);
+                        var colDel = document.createElement('div');
+                        colDel.className = 'col-md-1';
+                        var delBtn = document.createElement('button');
+                        delBtn.type = 'button';
+                        delBtn.className = 'btn btn-sm btn-outline-danger w-100';
+                        delBtn.innerHTML = '<i class="fa fa-times"></i>';
+                        delBtn.addEventListener('click', function() {
+                            lines.splice(index, 1);
+                            renderLines();
+                        });
+                        colDel.appendChild(delBtn);
 
-                        $row.append($colSelect).append($colText).append($colDel);
-                        $linesContainer.append($row);
+                        row.appendChild(colSelect);
+                        row.appendChild(colText);
+                        row.appendChild(colDel);
+                        linesContainer.appendChild(row);
                     });
                 }
 
-                $('#mod-dialoguebuilder__add-char-btn').on('click', function(e) {
+                document.getElementById('mod-dialoguebuilder__add-char-btn').addEventListener('click', function(e) {
                     e.preventDefault();
                     characters.push({
                         id: charIdCounter++,
@@ -246,7 +278,7 @@ define(['jquery', 'core/str'], function($, str) {
                     renderLines();
                 });
 
-                $('#mod-dialoguebuilder__add-line-btn').on('click', function(e) {
+                document.getElementById('mod-dialoguebuilder__add-line-btn').addEventListener('click', function(e) {
                     e.preventDefault();
                     if (characters.length > 0) {
                         lines.push({
@@ -257,12 +289,12 @@ define(['jquery', 'core/str'], function($, str) {
                     }
                 });
 
-                $submitForm.on('submit', function() {
+                submitForm.addEventListener('submit', function() {
                     var payload = {
                         characters: characters,
                         lines: lines
                     };
-                    $dataInput.val(JSON.stringify(payload));
+                    dataInput.value = JSON.stringify(payload);
                 });
 
                 // Initial render.

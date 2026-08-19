@@ -50,65 +50,7 @@
 </div>
 
 {{#js}}
-require(['jquery'], function($) {
-    var container = $('#{{chatid}}');
-    var messages = container.find('.mod-dialoguebuilder__chat-message');
-    var index = 0;
-    var currentTimeout = null;
-    var isPlaying = false;
-    
-    function showNextMessage() {
-        if (!isPlaying) return;
-        if (index >= messages.length) {
-            isPlaying = false;
-            container.trigger('dialogue:ended');
-            return;
-        }
-        
-        var el = $(messages[index]);
-        
-        el.addClass('mod-dialoguebuilder__typing');
-        container.animate({ scrollTop: container[0].scrollHeight }, 300);
-        
-        currentTimeout = setTimeout(function() {
-            if (!isPlaying) return; // check again in case paused during typing
-            
-            el.removeClass('mod-dialoguebuilder__typing').addClass('mod-dialoguebuilder__show');
-            container.animate({ scrollTop: container[0].scrollHeight }, 300);
-            
-            index++;
-            
-            currentTimeout = setTimeout(showNextMessage, 600);
-        }, 1200);
-    }
-    
-    container.on('dialogue:play', function() {
-        if (isPlaying) return;
-        isPlaying = true;
-        showNextMessage();
-    });
-
-    container.on('dialogue:pause', function() {
-        isPlaying = false;
-        if (currentTimeout) {
-            clearTimeout(currentTimeout);
-            currentTimeout = null;
-        }
-    });
-
-    container.on('dialogue:replay', function() {
-        isPlaying = false;
-        if (currentTimeout) {
-            clearTimeout(currentTimeout);
-            currentTimeout = null;
-        }
-        messages.removeClass('mod-dialoguebuilder__typing mod-dialoguebuilder__show');
-        index = 0;
-        container.animate({ scrollTop: 0 }, 100);
-        
-        setTimeout(function() {
-            container.trigger('dialogue:play');
-        }, 200);
-    });
+require(['mod_dialoguebuilder/player'], function(Player) {
+    Player.init('{{chatid}}');
 });
 {{/js}}
