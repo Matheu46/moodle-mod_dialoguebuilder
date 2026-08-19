@@ -1,11 +1,44 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+    @template mod_dialoguebuilder/chat_view
+    @copyright 2026 Matheus Mathias
+    @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+
+    Chat template for mod_dialoguebuilder.
+
+}}
+
 <div class="mod-dialoguebuilder__chat-container" id="{{chatid}}">
     {{#lines}}
-    <div class="mod-dialoguebuilder__chat-message {{#is_self}}mod-dialoguebuilder__self{{/is_self}}{{^is_self}}mod-dialoguebuilder__other{{/is_self}}">
-        {{#avatarurl}}
-            <img src="{{avatarurl}}" alt="{{charname}}" class="mod-dialoguebuilder__avatar flex-shrink-0 {{#is_self}}order-2 ms-2{{/is_self}}{{^is_self}}me-2{{/is_self}}">
-        {{/avatarurl}}
+    <div class="mod-dialoguebuilder__chat-message {{#is_self}}mod-dialoguebuilder__self{{/is_self}}{{^is_self}}mod-dialoguebuilder__other{{/is_self}} {{#same_as_prev}}mod-dialoguebuilder__same-as-prev{{/same_as_prev}}">
+        {{^same_as_prev}}
+            {{#avatarurl}}
+                <img src="{{avatarurl}}" alt="{{charname}}" class="mod-dialoguebuilder__avatar flex-shrink-0 {{#is_self}}order-2 ms-2{{/is_self}}{{^is_self}}me-2{{/is_self}}">
+            {{/avatarurl}}
+        {{/same_as_prev}}
+        {{#same_as_prev}}
+            {{#avatarurl}}
+            <div class="mod-dialoguebuilder__avatar flex-shrink-0 {{#is_self}}order-2 ms-2{{/is_self}}{{^is_self}}me-2{{/is_self}}" style="background: transparent;"></div>
+            {{/avatarurl}}
+        {{/same_as_prev}}
         <div class="mod-dialoguebuilder__chat-bubble">
+            {{^same_as_prev}}
             <div class="mod-dialoguebuilder__chat-author">{{charname}}</div>
+            {{/same_as_prev}}
             <div class="mod-dialoguebuilder__chat-typing"><span></span><span></span><span></span></div>
             <div class="mod-dialoguebuilder__chat-text">{{{text}}}</div>
         </div>

@@ -109,6 +109,7 @@ if (has_capability('moodle/course:manageactivities', $context)) {
         $lines = $DB->get_records('dialoguebuilder_lines', ['submissionid' => $submission->id], 'sortorder ASC');
 
         $templatedata = ['lines' => [], 'chatid' => 'chat-' . uniqid()];
+        $lastcharid = null;
         foreach ($lines as $line) {
             $charinfo = isset($charmap[$line->characterid]) ? $charmap[$line->characterid] : ['name' => 'Desconhecido', 'avatarurl' => ''];
             $templatedata['lines'][] = [
@@ -116,7 +117,9 @@ if (has_capability('moodle/course:manageactivities', $context)) {
                 'avatarurl' => $charinfo['avatarurl'],
                 'text' => format_text($line->text_content, FORMAT_MOODLE),
                 'is_self' => ($line->characterid == $firstcharid),
+                'same_as_prev' => ($line->characterid == $lastcharid),
             ];
+            $lastcharid = $line->characterid;
         }
 
         echo $OUTPUT->heading('Seu Diálogo', 3);

@@ -120,6 +120,7 @@ if ($action === 'view' && $subid) {
         echo $OUTPUT->notification("Nenhum diálogo encontrado para esta submissão.", 'info');
     } else {
         $templatedata = ['lines' => [], 'chatid' => 'chat-' . uniqid()];
+        $lastcharid = null;
         foreach ($lines as $line) {
             $charinfo = isset($charmap[$line->characterid]) ? $charmap[$line->characterid] : ['name' => 'Desconhecido', 'avatarurl' => ''];
             $templatedata['lines'][] = [
@@ -127,7 +128,9 @@ if ($action === 'view' && $subid) {
                 'avatarurl' => $charinfo['avatarurl'],
                 'text' => format_text($line->text_content, FORMAT_MOODLE),
                 'is_self' => ($line->characterid == $firstcharid),
+                'same_as_prev' => ($line->characterid == $lastcharid),
             ];
+            $lastcharid = $line->characterid;
         }
         echo $OUTPUT->render_from_template('mod_dialoguebuilder/chat_view', $templatedata);
         echo $OUTPUT->render_from_template('mod_dialoguebuilder/player', ['chatid' => $templatedata['chatid']]);
