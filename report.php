@@ -63,7 +63,7 @@ if ($action === 'grade' && data_submitted() && confirm_sesskey()) {
 
     if ($saveandnext && $nextsubid) {
         redirect(
-            new moodle_url('/mod/dialoguebuilder/report.php', ['id' => $cm->id, 'action' => 'view', 'subid' => $nextsubid], 'region-main'),
+            new moodle_url('/mod/dialoguebuilder/report.php', ['id' => $cm->id, 'action' => 'view', 'subid' => $nextsubid]),
             get_string('gradesaved', 'mod_dialoguebuilder'),
             null,
             \core\output\notification::NOTIFY_SUCCESS
@@ -90,8 +90,10 @@ if ($action === 'view' && $subid) {
 
     $PAGE->set_title(get_string('viewdialogue', 'mod_dialoguebuilder'));
     $PAGE->set_heading(fullname($user));
+    $PAGE->set_pagelayout('popup');
 
     echo $OUTPUT->header();
+    
     echo $OUTPUT->heading(get_string('dialoguefor', 'mod_dialoguebuilder', fullname($user)));
 
     // Navigation logic.
@@ -111,7 +113,7 @@ if ($action === 'view' && $subid) {
     
     echo html_writer::start_tag('div');
     if ($prevsubid) {
-        $prevurl = new moodle_url('/mod/dialoguebuilder/report.php', ['id' => $cm->id, 'action' => 'view', 'subid' => $prevsubid], 'region-main');
+        $prevurl = new moodle_url('/mod/dialoguebuilder/report.php', ['id' => $cm->id, 'action' => 'view', 'subid' => $prevsubid]);
         echo html_writer::link($prevurl, '&laquo; ' . get_string('previous', 'mod_dialoguebuilder'), ['class' => 'btn btn-outline-primary mr-2']);
     }
     
@@ -120,7 +122,7 @@ if ($action === 'view' && $subid) {
     }
     
     if ($nextsubid) {
-        $nexturl = new moodle_url('/mod/dialoguebuilder/report.php', ['id' => $cm->id, 'action' => 'view', 'subid' => $nextsubid], 'region-main');
+        $nexturl = new moodle_url('/mod/dialoguebuilder/report.php', ['id' => $cm->id, 'action' => 'view', 'subid' => $nextsubid]);
         echo html_writer::link($nexturl, get_string('next', 'mod_dialoguebuilder') . ' &raquo;', ['class' => 'btn btn-outline-primary ml-2']);
     }
     echo html_writer::end_tag('div');
