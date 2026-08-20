@@ -45,6 +45,8 @@ $PAGE->set_context($context);
 if ($action === 'grade' && data_submitted() && confirm_sesskey()) {
     $grade = optional_param('grade', null, PARAM_FLOAT);
     $feedback = optional_param('feedback', '', PARAM_RAW);
+    $saveandnext = optional_param('saveandnext', false, PARAM_BOOL);
+    $nextsubid = optional_param('nextsubid', 0, PARAM_INT);
     $submission = $DB->get_record(
         'dialoguebuilder_subs',
         ['id' => $subid, 'dialoguebuilderid' => $dialoguebuilder->id],
@@ -59,12 +61,21 @@ if ($action === 'grade' && data_submitted() && confirm_sesskey()) {
 
     dialoguebuilder_update_grades($dialoguebuilder, $submission->userid);
 
-    redirect(
-        new moodle_url('/mod/dialoguebuilder/report.php', ['id' => $cm->id]),
-        get_string('gradesaved', 'mod_dialoguebuilder'),
-        null,
-        \core\output\notification::NOTIFY_SUCCESS
-    );
+    if ($saveandnext && $nextsubid) {
+        redirect(
+            new moodle_url('/mod/dialoguebuilder/report.php', ['id' => $cm->id, 'action' => 'view', 'subid' => $nextsubid], 'region-main'),
+            get_string('gradesaved', 'mod_dialoguebuilder'),
+            null,
+            \core\output\notification::NOTIFY_SUCCESS
+        );
+    } else {
+        redirect(
+            new moodle_url('/mod/dialoguebuilder/report.php', ['id' => $cm->id]),
+            get_string('gradesaved', 'mod_dialoguebuilder'),
+            null,
+            \core\output\notification::NOTIFY_SUCCESS
+        );
+    }
 }
 
 if ($action === 'view' && $subid) {
@@ -83,9 +94,38 @@ if ($action === 'view' && $subid) {
     echo $OUTPUT->header();
     echo $OUTPUT->heading(get_string('dialoguefor', 'mod_dialoguebuilder', fullname($user)));
 
-    // Back button.
+    // Navigation logic.
+    $allsubids = $DB->get_fieldset_sql(
+        "SELECT id FROM {dialoguebuilder_subs} WHERE dialoguebuilderid = :dbid ORDER BY timecreated DESC, id DESC", 
+        ['dbid' => $dialoguebuilder->id]
+    );
+    $currentindex = array_search($subid, $allsubids);
+    $prevsubid = ($currentindex > 0) ? $allsubids[$currentindex - 1] : null;
+    $nextsubid = ($currentindex !== false && $currentindex < count($allsubids) - 1) ? $allsubids[$currentindex + 1] : null;
+
+    // Navigation row.
+    echo html_writer::start_tag('div', ['class' => 'd-flex justify-content-between align-items-center mb-3']);
+    
     $backurl = new moodle_url('/mod/dialoguebuilder/report.php', ['id' => $cm->id]);
-    echo html_writer::link($backurl, get_string('backtosubmissions', 'mod_dialoguebuilder'), ['class' => 'btn btn-secondary mb-3']);
+    echo html_writer::link($backurl, get_string('backtosubmissions', 'mod_dialoguebuilder'), ['class' => 'btn btn-secondary']);
+    
+    echo html_writer::start_tag('div');
+    if ($prevsubid) {
+        $prevurl = new moodle_url('/mod/dialoguebuilder/report.php', ['id' => $cm->id, 'action' => 'view', 'subid' => $prevsubid], 'region-main');
+        echo html_writer::link($prevurl, '&laquo; ' . get_string('previous', 'mod_dialoguebuilder'), ['class' => 'btn btn-outline-primary mr-2']);
+    }
+    
+    if ($currentindex !== false) {
+        echo html_writer::tag('span', ' ' . ($currentindex + 1) . ' / ' . count($allsubids) . ' ', ['class' => 'mx-2 text-muted']);
+    }
+    
+    if ($nextsubid) {
+        $nexturl = new moodle_url('/mod/dialoguebuilder/report.php', ['id' => $cm->id, 'action' => 'view', 'subid' => $nextsubid], 'region-main');
+        echo html_writer::link($nexturl, get_string('next', 'mod_dialoguebuilder') . ' &raquo;', ['class' => 'btn btn-outline-primary ml-2']);
+    }
+    echo html_writer::end_tag('div');
+    
+    echo html_writer::end_tag('div');
 
     // Fetch characters.
     $characters = $DB->get_records('dialoguebuilder_chars', ['submissionid' => $submission->id], 'id ASC');
@@ -151,6 +191,7 @@ if ($action === 'view' && $subid) {
         echo html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'action', 'value' => 'grade']);
         echo html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'subid', 'value' => $subid]);
         echo html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()]);
+        echo html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'nextsubid', 'value' => $nextsubid ? $nextsubid : 0]);
 
         echo html_writer::start_tag('div', ['class' => 'form-group mb-3']);
         echo html_writer::label(
@@ -186,10 +227,19 @@ if ($action === 'view' && $subid) {
         );
         echo html_writer::end_tag('div');
 
+        echo html_writer::start_tag('div', ['class' => 'd-flex gap-2']);
         echo html_writer::empty_tag(
             'input',
-            ['type' => 'submit', 'value' => get_string('savechanges'), 'class' => 'btn btn-primary']
+            ['type' => 'submit', 'name' => 'save', 'value' => get_string('savechanges'), 'class' => 'btn btn-primary']
         );
+        
+        if ($nextsubid) {
+            echo html_writer::empty_tag(
+                'input',
+                ['type' => 'submit', 'name' => 'saveandnext', 'value' => get_string('saveandnext', 'mod_dialoguebuilder'), 'class' => 'btn btn-success']
+            );
+        }
+        echo html_writer::end_tag('div');
 
         echo html_writer::end_tag('form');
         echo $OUTPUT->box_end();
@@ -205,7 +255,7 @@ if ($action === 'view' && $subid) {
     $sql = "SELECT ds.*
             FROM {dialoguebuilder_subs} ds
             WHERE ds.dialoguebuilderid = :dbid
-            ORDER BY ds.timecreated DESC";
+            ORDER BY ds.timecreated DESC, ds.id DESC";
 
     $submissions = $DB->get_records_sql($sql, ['dbid' => $dialoguebuilder->id]);
 

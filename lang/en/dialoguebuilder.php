@@ -78,3 +78,6 @@ $string['character'] = 'Character';
 $string['play'] = 'Play';
 $string['pause'] = 'Pause';
 $string['replay'] = 'Replay';
+$string['saveandnext'] = 'Save and show next';
+$string['next'] = 'Next';
+$string['previous'] = 'Previous';
