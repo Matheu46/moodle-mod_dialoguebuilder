@@ -81,3 +81,11 @@ $string['replay'] = 'Replay';
 $string['saveandnext'] = 'Save and show next';
 $string['next'] = 'Next';
 $string['previous'] = 'Previous';
+
+// View strings.
+$string['teachersummary'] = 'Teacher summary: {$a} students have submitted dialogues so far.';
+$string['studentguidelines'] = 'Read the teacher\'s guidelines above and create your script.';
+$string['unknown'] = 'Unknown';
+$string['yourdialogue'] = 'Your dialogue';
+$string['editdialogue'] = 'Edit dialogue';
+$string['startdialogue'] = 'Start dialogue';

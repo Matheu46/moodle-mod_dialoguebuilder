@@ -93,12 +93,12 @@ if ($action === 'view' && $subid) {
     $PAGE->set_pagelayout('popup');
 
     echo $OUTPUT->header();
-    
+
     echo $OUTPUT->heading(get_string('dialoguefor', 'mod_dialoguebuilder', fullname($user)));
 
     // Navigation logic.
     $allsubids = $DB->get_fieldset_sql(
-        "SELECT id FROM {dialoguebuilder_subs} WHERE dialoguebuilderid = :dbid ORDER BY timecreated DESC, id DESC", 
+        "SELECT id FROM {dialoguebuilder_subs} WHERE dialoguebuilderid = :dbid ORDER BY timecreated DESC, id DESC",
         ['dbid' => $dialoguebuilder->id]
     );
     $currentindex = array_search($subid, $allsubids);
@@ -107,26 +107,26 @@ if ($action === 'view' && $subid) {
 
     // Navigation row.
     echo html_writer::start_tag('div', ['class' => 'd-flex justify-content-between align-items-center mb-3']);
-    
+
     $backurl = new moodle_url('/mod/dialoguebuilder/report.php', ['id' => $cm->id]);
     echo html_writer::link($backurl, get_string('backtosubmissions', 'mod_dialoguebuilder'), ['class' => 'btn btn-secondary']);
-    
+
     echo html_writer::start_tag('div');
     if ($prevsubid) {
         $prevurl = new moodle_url('/mod/dialoguebuilder/report.php', ['id' => $cm->id, 'action' => 'view', 'subid' => $prevsubid]);
         echo html_writer::link($prevurl, '&laquo; ' . get_string('previous', 'mod_dialoguebuilder'), ['class' => 'btn btn-outline-primary mr-2']);
     }
-    
+
     if ($currentindex !== false) {
         echo html_writer::tag('span', ' ' . ($currentindex + 1) . ' / ' . count($allsubids) . ' ', ['class' => 'mx-2 text-muted']);
     }
-    
+
     if ($nextsubid) {
         $nexturl = new moodle_url('/mod/dialoguebuilder/report.php', ['id' => $cm->id, 'action' => 'view', 'subid' => $nextsubid]);
         echo html_writer::link($nexturl, get_string('next', 'mod_dialoguebuilder') . ' &raquo;', ['class' => 'btn btn-outline-primary ml-2']);
     }
     echo html_writer::end_tag('div');
-    
+
     echo html_writer::end_tag('div');
 
     // Fetch characters.
@@ -134,7 +134,7 @@ if ($action === 'view' && $subid) {
     $charmap = [];
     $firstcharid = null;
     $fs = get_file_storage();
-    
+
     foreach ($characters as $char) {
         $avatarurl = '';
         $files = $fs->get_area_files($context->id, 'mod_dialoguebuilder', 'avatar', $char->id, 'id DESC', false);
@@ -145,10 +145,10 @@ if ($action === 'view' && $subid) {
         if (empty($avatarurl)) {
             $avatarurl = $OUTPUT->image_url('u/f2')->out(false);
         }
-        
+
         $charmap[$char->id] = [
             'name' => $char->name,
-            'avatarurl' => $avatarurl
+            'avatarurl' => $avatarurl,
         ];
         if ($firstcharid === null) {
             $firstcharid = $char->id;
@@ -234,7 +234,7 @@ if ($action === 'view' && $subid) {
             'input',
             ['type' => 'submit', 'name' => 'save', 'value' => get_string('savechanges'), 'class' => 'btn btn-primary']
         );
-        
+
         if ($nextsubid) {
             echo html_writer::empty_tag(
                 'input',

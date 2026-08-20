@@ -238,7 +238,7 @@ function dialoguebuilder_grade_item_delete($dialoguebuilder) {
  * @param array $options
  * @return bool false if file not found, does not return if found
  */
-function dialoguebuilder_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = array()) {
+function dialoguebuilder_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = []) {
     global $DB;
 
     if ($context->contextlevel != CONTEXT_MODULE) {
@@ -263,6 +263,6 @@ function dialoguebuilder_pluginfile($course, $cm, $context, $filearea, $args, $f
 
         send_stored_file($file, 0, 0, $forcedownload, $options);
     }
-    
+
     return false;
 }

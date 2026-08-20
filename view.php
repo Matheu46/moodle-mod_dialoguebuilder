@@ -63,7 +63,7 @@ if (has_capability('moodle/course:manageactivities', $context)) {
     $submissioncount = $DB->count_records('dialoguebuilder_subs', ['dialoguebuilderid' => $dialoguebuilder->id]);
 
     echo $OUTPUT->box(
-        "Resumo para Professores: $submissioncount alunos submeteram diálogos até o momento.",
+        get_string('teachersummary', 'mod_dialoguebuilder', $submissioncount),
         'generalbox teacher-view-box'
     );
 
@@ -71,7 +71,7 @@ if (has_capability('moodle/course:manageactivities', $context)) {
     echo $OUTPUT->single_button($reporturl, get_string('viewsubmissions', 'mod_dialoguebuilder'), 'get', ['primary' => true]);
 } else {
     // Student view.
-    echo $OUTPUT->box('Leia as diretrizes do professor acima e crie o seu roteiro de falas.', 'generalbox student-view-box');
+    echo $OUTPUT->box(get_string('studentguidelines', 'mod_dialoguebuilder'), 'generalbox student-view-box');
 
     // Check if the student has already submitted.
     $submission = $DB->get_record('dialoguebuilder_subs', [
@@ -85,7 +85,7 @@ if (has_capability('moodle/course:manageactivities', $context)) {
         $charmap = [];
         $firstcharid = null;
         $fs = get_file_storage();
-        
+
         foreach ($characters as $char) {
             $avatarurl = '';
             $files = $fs->get_area_files($context->id, 'mod_dialoguebuilder', 'avatar', $char->id, 'id DESC', false);
@@ -96,10 +96,10 @@ if (has_capability('moodle/course:manageactivities', $context)) {
             if (empty($avatarurl)) {
                 $avatarurl = $OUTPUT->image_url('u/f2')->out(false);
             }
-            
+
             $charmap[$char->id] = [
                 'name' => $char->name,
-                'avatarurl' => $avatarurl
+                'avatarurl' => $avatarurl,
             ];
             if ($firstcharid === null) {
                 $firstcharid = $char->id; // First character created is considered "self".
@@ -111,7 +111,7 @@ if (has_capability('moodle/course:manageactivities', $context)) {
         $templatedata = ['lines' => [], 'chatid' => 'chat-' . uniqid()];
         $lastcharid = null;
         foreach ($lines as $line) {
-            $charinfo = isset($charmap[$line->characterid]) ? $charmap[$line->characterid] : ['name' => 'Desconhecido', 'avatarurl' => ''];
+            $charinfo = isset($charmap[$line->characterid]) ? $charmap[$line->characterid] : ['name' => get_string('unknown', 'mod_dialoguebuilder'), 'avatarurl' => ''];
             $templatedata['lines'][] = [
                 'charname' => $charinfo['name'],
                 'avatarurl' => $charinfo['avatarurl'],
@@ -122,7 +122,7 @@ if (has_capability('moodle/course:manageactivities', $context)) {
             $lastcharid = $line->characterid;
         }
 
-        echo $OUTPUT->heading('Seu Diálogo', 3);
+        echo $OUTPUT->heading(get_string('yourdialogue', 'mod_dialoguebuilder'), 3);
         echo $OUTPUT->render_from_template('mod_dialoguebuilder/chat_view', $templatedata);
         echo $OUTPUT->render_from_template('mod_dialoguebuilder/player', ['chatid' => $templatedata['chatid']]);
     }
@@ -144,7 +144,7 @@ if (has_capability('moodle/course:manageactivities', $context)) {
     // Render a button to start/edit the dialogue only if open.
     if ($isopen) {
         $url = new moodle_url('/mod/dialoguebuilder/edit.php', ['id' => $cm->id]);
-        $btntext = $submission ? 'Editar Diálogo' : 'Iniciar Diálogo';
+        $btntext = $submission ? get_string('editdialogue', 'mod_dialoguebuilder') : get_string('startdialogue', 'mod_dialoguebuilder');
         echo $OUTPUT->single_button($url, $btntext, 'get', ['primary' => true]);
     }
 }

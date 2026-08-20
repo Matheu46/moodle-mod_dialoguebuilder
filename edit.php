@@ -84,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'save') {
         // Save Characters.
         $charmap = []; // Map frontend temp ID to DB ID.
         $submittedcharids = []; // To track which characters still exist.
-        
+
         // Get the standard Moodle upload limit for the course.
         $maxbytes = get_max_upload_file_size($CFG->maxbytes, $course->maxbytes);
 
@@ -115,7 +115,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'save') {
                 if (isset($_FILES['avatars']) && isset($_FILES['avatars']['tmp_name'][$char->id]) && $_FILES['avatars']['error'][$char->id] === UPLOAD_ERR_OK) {
                     $tmpname = $_FILES['avatars']['tmp_name'][$char->id];
                     $filesize = filesize($tmpname);
-                    
+
                     if ($filesize <= $maxbytes) {
                         $fileinfo = [
                             'contextid' => $context->id,
@@ -132,7 +132,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'save') {
                     }
                 }
             }
-            
+
             // Delete removed characters and their avatars.
             if (!empty($existingchars)) {
                 foreach ($existingchars as $ec) {
@@ -185,7 +185,7 @@ if ($submission) {
     $dbchars = $DB->get_records('dialoguebuilder_chars', ['submissionid' => $submission->id]);
     $fs = get_file_storage();
     $context = context_module::instance($cm->id);
-    
+
     foreach ($dbchars as $c) {
         $avatarurl = '';
         $files = $fs->get_area_files($context->id, 'mod_dialoguebuilder', 'avatar', $c->id, 'id DESC', false);
@@ -193,11 +193,11 @@ if ($submission) {
             $file = reset($files);
             $avatarurl = moodle_url::make_pluginfile_url($file->get_contextid(), $file->get_component(), $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename())->out(false);
         }
-        
+
         $characters[] = [
             'id' => $c->id,
             'name' => $c->name,
-            'avatarurl' => $avatarurl
+            'avatarurl' => $avatarurl,
         ];
     }
 
