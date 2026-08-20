@@ -49,26 +49,52 @@ $PAGE->set_context($context);
 
 // Output starts here.
 echo $OUTPUT->header();
-echo $OUTPUT->heading(format_string($dialoguebuilder->name));
-
-// Display the introduction if present.
-if (!empty($dialoguebuilder->intro)) {
-    echo $OUTPUT->box(format_module_intro('dialoguebuilder', $dialoguebuilder, $cm->id), 'generalbox mod_introbox', 'intro');
-}
 
 // Capability-based display: Teacher vs Student.
 // Using 'moodle/course:manageactivities' as a proxy for teacher capability until custom roles are fully defined.
 if (has_capability('moodle/course:manageactivities', $context)) {
-    // Teacher view.
-    $submissioncount = $DB->count_records('dialoguebuilder_subs', ['dialoguebuilderid' => $dialoguebuilder->id]);
+    // Teacher view: Grading summary.
+    require_once($CFG->dirroot . '/lib/enrollib.php');
 
-    echo $OUTPUT->box(
-        get_string('teachersummary', 'mod_dialoguebuilder', $submissioncount),
-        'generalbox teacher-view-box'
-    );
+    echo $OUTPUT->box_start('generalbox boxaligncenter mt-4 mb-4', 'gradingsummarybox');
+    echo $OUTPUT->heading(get_string('gradingsummary', 'mod_dialoguebuilder'), 3);
+
+    $participants = count_enrolled_users($context, 'mod/dialoguebuilder:submit');
+    $submissioncount = $DB->count_records('dialoguebuilder_subs', ['dialoguebuilderid' => $dialoguebuilder->id]);
+    $needsgrading = $DB->count_records_select('dialoguebuilder_subs', 'dialoguebuilderid = ? AND grade IS NULL', [$dialoguebuilder->id]);
+
+    $timeremaining = '';
+    if ($dialoguebuilder->timeclose > 0) {
+        $now = time();
+        if ($dialoguebuilder->timeclose > $now) {
+            $timeremaining = format_time($dialoguebuilder->timeclose - $now);
+        } else {
+            $timeremaining = html_writer::tag('span', get_string('assignmentisdue', 'mod_dialoguebuilder'), ['class' => 'text-danger']);
+        }
+    }
+
+    $table = new html_table();
+    $table->attributes['class'] = 'generaltable grading-summary-table mt-3 mx-auto';
+    $table->attributes['style'] = 'max-width: 600px; width: 100%;';
+
+    $hidden = ($cm->visible == 0) ? get_string('yes') : get_string('no');
+    $table->data[] = [get_string('hiddenfromstudents', 'mod_dialoguebuilder'), $hidden];
+    $table->data[] = [get_string('participants', 'mod_dialoguebuilder'), $participants];
+    $table->data[] = [get_string('submitted', 'mod_dialoguebuilder'), $submissioncount];
+    $table->data[] = [get_string('needsgrading', 'mod_dialoguebuilder'), $needsgrading];
+
+    if ($dialoguebuilder->timeclose > 0) {
+        $table->data[] = [get_string('timeremaining', 'mod_dialoguebuilder'), $timeremaining];
+    }
+
+    echo html_writer::table($table);
 
     $reporturl = new moodle_url('/mod/dialoguebuilder/report.php', ['id' => $cm->id]);
+    echo html_writer::start_tag('div', ['class' => 'text-center mt-3 mb-2']);
     echo $OUTPUT->single_button($reporturl, get_string('viewsubmissions', 'mod_dialoguebuilder'), 'get', ['primary' => true]);
+    echo html_writer::end_tag('div');
+
+    echo $OUTPUT->box_end();
 } else {
     // Student view.
     echo $OUTPUT->box(get_string('studentguidelines', 'mod_dialoguebuilder'), 'generalbox student-view-box');

@@ -89,3 +89,12 @@ $string['unknown'] = 'Unknown';
 $string['yourdialogue'] = 'Your dialogue';
 $string['editdialogue'] = 'Edit dialogue';
 $string['startdialogue'] = 'Start dialogue';
+
+// Grading summary block strings.
+$string['gradingsummary'] = 'Grading summary';
+$string['hiddenfromstudents'] = 'Hidden from students';
+$string['participants'] = 'Participants';
+$string['submitted'] = 'Submitted';
+$string['needsgrading'] = 'Needs grading';
+$string['timeremaining'] = 'Time remaining';
+$string['assignmentisdue'] = 'Assignment is due';
