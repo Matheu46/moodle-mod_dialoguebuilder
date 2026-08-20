@@ -69,11 +69,22 @@ define(['mod_dialoguebuilder/html2canvas', 'core/notification'], function(html2c
                     clone.style.overflow = 'visible';
                     clone.style.maxHeight = 'none';
 
-                    // Make all messages visible
-                    var messages = clone.querySelectorAll('.mod-dialoguebuilder__chat-message');
-                    messages.forEach(function(msg) {
-                        msg.classList.remove('mod-dialoguebuilder__typing');
-                        msg.classList.add('mod-dialoguebuilder__show');
+                    // Force static mode so animation opacity doesn't cause a washed out look
+                    clone.classList.add('mod-dialoguebuilder__static');
+
+                    // html2canvas struggles with object-fit: cover on images, causing them to squish.
+                    // Convert img avatars to divs with background-image on the clone.
+                    var avatars = clone.querySelectorAll('img.mod-dialoguebuilder__avatar');
+                    avatars.forEach(function(img) {
+                        var div = document.createElement('div');
+                        div.className = img.className;
+                        div.style.backgroundImage = 'url("' + img.src + '")';
+                        div.style.backgroundSize = 'cover';
+                        div.style.backgroundPosition = 'center';
+                        div.style.width = '40px';
+                        div.style.height = '40px';
+                        div.style.borderRadius = '50%';
+                        img.parentNode.replaceChild(div, img);
                     });
 
                     document.body.appendChild(clone);
