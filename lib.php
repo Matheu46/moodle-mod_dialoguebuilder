@@ -266,3 +266,30 @@ function dialoguebuilder_pluginfile($course, $cm, $context, $filearea, $args, $f
 
     return false;
 }
+
+/**
+ * Extends the settings navigation with the dialoguebuilder settings.
+ *
+ * @param settings_navigation $settingsnav The settings navigation object
+ * @param navigation_node $dialoguebuildernode The node to add module settings to
+ */
+function dialoguebuilder_extend_settings_navigation(settings_navigation $settingsnav, navigation_node $dialoguebuildernode = null) {
+    global $PAGE;
+
+    if (!has_capability('moodle/course:manageactivities', $PAGE->cm->context)) {
+        return;
+    }
+
+    if ($dialoguebuildernode) {
+        $url = new moodle_url('/mod/dialoguebuilder/report.php', ['id' => $PAGE->cm->id]);
+        $node = navigation_node::create(
+            get_string('submissions', 'mod_dialoguebuilder'),
+            $url,
+            navigation_node::TYPE_SETTING,
+            null,
+            'submissions',
+            new pix_icon('i/report', '')
+        );
+        $dialoguebuildernode->add_node($node);
+    }
+}

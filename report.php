@@ -42,6 +42,8 @@ require_capability('moodle/course:manageactivities', $context); // Use viewall c
 $PAGE->set_url(new moodle_url('/mod/dialoguebuilder/report.php', ['id' => $cm->id]));
 $PAGE->set_context($context);
 
+$PAGE->activityheader->set_description('');
+
 if ($action === 'grade' && data_submitted() && confirm_sesskey()) {
     $grade = optional_param('grade', null, PARAM_FLOAT);
     $feedback = optional_param('feedback', '', PARAM_RAW);
