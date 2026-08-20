@@ -158,6 +158,9 @@ if ($action === 'view' && $subid) {
     // Fetch lines.
     $lines = $DB->get_records('dialoguebuilder_lines', ['submissionid' => $submission->id], 'sortorder ASC');
 
+    echo html_writer::start_tag('div', ['class' => 'row']);
+    echo html_writer::start_tag('div', ['class' => 'col-lg-8 col-md-12']);
+
     if (empty($lines)) {
         echo $OUTPUT->notification("Nenhum diálogo encontrado para esta submissão.", 'info');
     } else {
@@ -178,12 +181,17 @@ if ($action === 'view' && $subid) {
         echo $OUTPUT->render_from_template('mod_dialoguebuilder/player', ['chatid' => $templatedata['chatid']]);
     }
 
+    echo html_writer::end_tag('div'); // end col-lg-8
+
+    // Grading form column
+    echo html_writer::start_tag('div', ['class' => 'col-lg-4 col-md-12']);
+
     // Grading form.
     if ($dialoguebuilder->grade > 0) {
         echo $OUTPUT->box_start(
-            'generalbox mt-4 p-4',
+            'generalbox mt-4 mt-lg-0 p-4',
             'grading-box',
-            ['style' => 'background: #f8f9fa; border-radius: 8px; border: 1px solid #ddd; max-width: 600px; margin: 0 auto;']
+            ['style' => 'background: #f8f9fa; border-radius: 8px; border: 1px solid #ddd;']
         );
         echo $OUTPUT->heading(get_string('grade', 'mod_dialoguebuilder'), 3);
 
@@ -246,6 +254,9 @@ if ($action === 'view' && $subid) {
         echo html_writer::end_tag('form');
         echo $OUTPUT->box_end();
     }
+
+    echo html_writer::end_tag('div'); // end col-lg-4
+    echo html_writer::end_tag('div'); // end row
 } else {
     // List all submissions.
     $PAGE->set_title(get_string('submissions', 'mod_dialoguebuilder'));
