@@ -42,8 +42,9 @@
     }
 }}
 
-<div class="mod-dialoguebuilder__chat-container" id="{{chatid}}">
+<div class="mod-dialoguebuilder__chat-container {{#is_static}}mod-dialoguebuilder__static{{/is_static}}" id="{{chatid}}">
     {{#lines}}
+
     <div class="mod-dialoguebuilder__chat-message {{#is_self}}mod-dialoguebuilder__self{{/is_self}}{{^is_self}}mod-dialoguebuilder__other{{/is_self}} {{#same_as_prev}}mod-dialoguebuilder__same-as-prev{{/same_as_prev}}">
         {{^same_as_prev}}
             {{#avatarurl}}
@@ -65,7 +66,7 @@
     </div>
     {{/lines}}
     {{^lines}}
-        <div class="alert alert-info text-center">Nenhuma fala registrada ainda.</div>
+        <div class="alert alert-info text-center">{{#str}} nolinesrecorded, mod_dialoguebuilder {{/str}}</div>
     {{/lines}}
 </div>
 

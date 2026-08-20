@@ -165,3 +165,9 @@
 .mod-dialoguebuilder__editor-wrapper {
     /* Optional editor wrapper styles */
 }
+
+/* Static mode for grading */
+.mod-dialoguebuilder__chat-container.mod-dialoguebuilder__static .mod-dialoguebuilder__chat-message {
+    display: flex;
+    animation: none;
+}

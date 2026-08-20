@@ -98,3 +98,6 @@ $string['submitted'] = 'Submitted';
 $string['needsgrading'] = 'Needs grading';
 $string['timeremaining'] = 'Time remaining';
 $string['assignmentisdue'] = 'Assignment is due';
+$string['nodialoguefound'] = 'No dialogue found for this submission.';
+$string['nolinesrecorded'] = 'No lines recorded yet.';
+$string['downloadasimage'] = 'Download as image';

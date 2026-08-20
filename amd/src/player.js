@@ -79,6 +79,10 @@ define([], function() {
                     clearTimeout(currentTimeout);
                     currentTimeout = null;
                 }
+
+                // Remove static mode if it was applied for grading read-mode
+                container.classList.remove('mod-dialoguebuilder__static');
+
                 messages.forEach(function(msg) {
                     msg.classList.remove('mod-dialoguebuilder__typing', 'mod-dialoguebuilder__show');
                 });

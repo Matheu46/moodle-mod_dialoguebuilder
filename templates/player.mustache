@@ -28,11 +28,11 @@
 
 <div class="mod-dialoguebuilder__player-controls text-center mb-3" data-target="{{chatid}}">
     <div class="btn-group" role="group">
-        <button class="btn btn-primary mod-dialoguebuilder__play-btn"><i class="fa fa-play" aria-hidden="true"></i> {{#str}} play, mod_dialoguebuilder {{/str}}</button>
+        <button class="btn btn-primary mod-dialoguebuilder__play-btn" {{#is_static}}disabled{{/is_static}}><i class="fa fa-play" aria-hidden="true"></i> {{#str}} play, mod_dialoguebuilder {{/str}}</button>
         <button class="btn btn-secondary mod-dialoguebuilder__pause-btn" disabled><i class="fa fa-pause" aria-hidden="true"></i> {{#str}} pause, mod_dialoguebuilder {{/str}}</button>
-        <button class="btn btn-outline-secondary mod-dialoguebuilder__replay-btn" disabled><i class="fa fa-refresh" aria-hidden="true"></i> {{#str}} replay, mod_dialoguebuilder {{/str}}</button>
+        <button class="btn btn-outline-secondary mod-dialoguebuilder__replay-btn" {{^is_static}}disabled{{/is_static}}><i class="fa fa-refresh" aria-hidden="true"></i> {{#str}} replay, mod_dialoguebuilder {{/str}}</button>
     </div>
-    <button class="btn btn-outline-info ms-2 mod-dialoguebuilder__download-btn" title="Baixar como Imagem">
+    <button class="btn btn-outline-info ms-2 mod-dialoguebuilder__download-btn" title="{{#str}} downloadasimage, mod_dialoguebuilder {{/str}}">
         <i class="fa fa-download" aria-hidden="true"></i>
     </button>
 </div>
