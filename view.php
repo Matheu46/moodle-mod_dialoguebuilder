@@ -60,8 +60,8 @@ if (has_capability('moodle/course:manageactivities', $context)) {
     echo $OUTPUT->heading(get_string('gradingsummary', 'mod_dialoguebuilder'), 3);
 
     $participants = count_enrolled_users($context, 'mod/dialoguebuilder:submit');
-    $submissioncount = $DB->count_records('dialoguebuilder_subs', ['dialoguebuilderid' => $dialoguebuilder->id]);
-    $needsgrading = $DB->count_records_select('dialoguebuilder_subs', 'dialoguebuilderid = ? AND grade IS NULL', [$dialoguebuilder->id]);
+    $submissioncount = $DB->count_records('dialoguebuilder_subs', ['dialoguebuilderid' => $dialoguebuilder->id, 'status' => 'submitted']);
+    $needsgrading = $DB->count_records_select('dialoguebuilder_subs', 'dialoguebuilderid = ? AND grade IS NULL AND status = ?', [$dialoguebuilder->id, 'submitted']);
 
     $timeremaining = '';
     if ($dialoguebuilder->timeclose > 0) {
@@ -147,6 +147,15 @@ if (has_capability('moodle/course:manageactivities', $context)) {
             ];
             $lastcharid = $line->characterid;
         }
+
+        $statusstr = ($submission->status === 'submitted') ? get_string('status_submitted', 'mod_dialoguebuilder') : get_string('status_draft', 'mod_dialoguebuilder');
+        $badgeclass = ($submission->status === 'submitted') ? 'badge badge-success bg-success' : 'badge badge-warning bg-warning';
+        
+        echo html_writer::tag('div', 
+            html_writer::tag('strong', get_string('status', 'mod_dialoguebuilder') . ': ') . 
+            html_writer::tag('span', $statusstr, ['class' => $badgeclass]),
+            ['class' => 'mb-3 text-center']
+        );
 
         echo $OUTPUT->heading(get_string('yourdialogue', 'mod_dialoguebuilder'), 3);
         echo $OUTPUT->render_from_template('mod_dialoguebuilder/chat_view', $templatedata);

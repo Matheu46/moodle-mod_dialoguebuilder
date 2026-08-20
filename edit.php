@@ -51,7 +51,7 @@ if ($dialoguebuilder->timeclose > 0 && $now > $dialoguebuilder->timeclose) {
 }
 
 // Process form submission.
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'save') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($action === 'save_draft' || $action === 'submit')) {
     require_sesskey();
 
     $dialoguedataraw = required_param('dialoguedata', PARAM_RAW);
@@ -64,17 +64,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'save') {
             'userid' => $USER->id,
         ]);
 
+        if ($submission && $submission->status === 'submitted') {
+            // Prevent reverting to draft if it was already submitted.
+            $newstatus = 'submitted';
+        } else {
+            $newstatus = ($action === 'submit') ? 'submitted' : 'draft';
+        }
+
         if (!$submission) {
             $submission = new stdClass();
             $submission->dialoguebuilderid = $dialoguebuilder->id;
             $submission->userid = $USER->id;
-            $submission->status = 'submitted'; // Or draft.
+            $submission->status = $newstatus;
             $submission->timecreated = time();
             $submission->timemodified = time();
             $submission->id = $DB->insert_record('dialoguebuilder_subs', $submission);
         } else {
             $submission->timemodified = time();
-            $submission->status = 'submitted';
+            $submission->status = $newstatus;
             $DB->update_record('dialoguebuilder_subs', $submission);
 
             // Clean old lines only. Characters must be updated to preserve avatars.
@@ -162,10 +169,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'save') {
             }
         }
 
+        $msg = ($action === 'submit') ? get_string('tasksubmitted', 'mod_dialoguebuilder') : get_string('draftsaved', 'mod_dialoguebuilder');
+        
         // Redirect to view.php with success message.
         redirect(
             new moodle_url('/mod/dialoguebuilder/view.php', ['id' => $cm->id]),
-            'Seu roteiro de diálogo foi salvo com sucesso!',
+            $msg,
             null,
             \core\output\notification::NOTIFY_SUCCESS
         );
@@ -220,6 +229,7 @@ $templatedata = [
     'cmid' => $cm->id,
     'sesskey' => sesskey(),
     'initialdata' => $initialdata,
+    'is_submitted' => ($submission && $submission->status === 'submitted'),
 ];
 
 // Require the AMD module.
@@ -227,7 +237,7 @@ $PAGE->requires->js_call_amd('mod_dialoguebuilder/editor', 'init', [$cm->id]);
 
 // Output the page.
 echo $OUTPUT->header();
-echo $OUTPUT->heading('Editor de Diálogo');
+echo $OUTPUT->heading(get_string('dialoguescript', 'mod_dialoguebuilder'));
 
 echo $OUTPUT->render_from_template('mod_dialoguebuilder/editor', $templatedata);
 
