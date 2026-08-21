@@ -164,12 +164,12 @@ if ($action === 'view' && $subid) {
     echo html_writer::start_tag('div', ['class' => 'col-lg-8 col-md-12']);
 
     if (empty($lines)) {
-        echo $OUTPUT->notification("Nenhum diálogo encontrado para esta submissão.", 'info');
+        echo $OUTPUT->notification(get_string('nodialoguefound', 'mod_dialoguebuilder'), 'info');
     } else {
-        $templatedata = ['lines' => [], 'chatid' => 'chat-' . uniqid()];
+        $templatedata = ['lines' => [], 'chatid' => 'chat-' . uniqid(), 'is_static' => true];
         $lastcharid = null;
         foreach ($lines as $line) {
-            $charinfo = isset($charmap[$line->characterid]) ? $charmap[$line->characterid] : ['name' => 'Desconhecido', 'avatarurl' => ''];
+            $charinfo = isset($charmap[$line->characterid]) ? $charmap[$line->characterid] : ['name' => get_string('unknown', 'mod_dialoguebuilder'), 'avatarurl' => ''];
             $templatedata['lines'][] = [
                 'charname' => $charinfo['name'],
                 'avatarurl' => $charinfo['avatarurl'],
@@ -180,7 +180,7 @@ if ($action === 'view' && $subid) {
             $lastcharid = $line->characterid;
         }
         echo $OUTPUT->render_from_template('mod_dialoguebuilder/chat_view', $templatedata);
-        echo $OUTPUT->render_from_template('mod_dialoguebuilder/player', ['chatid' => $templatedata['chatid']]);
+        echo $OUTPUT->render_from_template('mod_dialoguebuilder/player', ['chatid' => $templatedata['chatid'], 'is_static' => true]);
     }
 
     echo html_writer::end_tag('div'); // end col-lg-8
@@ -307,10 +307,12 @@ if ($action === 'view' && $subid) {
             );
 
             $gradedisplay = isset($sub->grade) ? format_float($sub->grade, 1) : '-';
+            
+            $statusstr = ($sub->status === 'submitted') ? get_string('status_submitted', 'mod_dialoguebuilder') : get_string('status_draft', 'mod_dialoguebuilder');
 
             $table->data[] = [
                 $fullname,
-                $sub->status,
+                $statusstr,
                 $charcount,
                 $linecount,
                 $gradedisplay,

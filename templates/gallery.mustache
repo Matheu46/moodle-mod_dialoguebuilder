@@ -1,0 +1,58 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+    @template mod_dialoguebuilder/gallery
+    @copyright 2026 Matheus Mathias
+    @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+
+    Example context (json):
+    {
+        "cards": [
+            {
+                "authorname": "John Doe",
+                "avatarurl": "https://moodle.site/u/f2",
+                "preview": "Hello, how are you?",
+                "viewurl": "https://moodle.site/mod/dialoguebuilder/view_submission.php?id=1&subid=2"
+            }
+        ]
+    }
+}}
+
+<div class="mod-dialoguebuilder-gallery row mt-4">
+    {{#cards}}
+    <div class="col-12 col-md-6 col-lg-4 mb-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body text-center">
+                <div class="d-flex justify-content-center mb-3">
+                    {{#avatars}}
+                    <img src="{{url}}" alt="Avatar" class="rounded-circle shadow-sm" style="width: 80px; height: 80px; object-fit: cover; {{#is_second}}margin-left: -20px; border: 2px solid #fff; position: relative; z-index: 1;{{/is_second}}{{^is_second}}position: relative; z-index: 2;{{/is_second}}">
+                    {{/avatars}}
+                </div>
+                <h5 class="card-title">{{authorname}}</h5>
+                {{#preview}}
+                <p class="card-text text-muted font-italic">"{{preview}}"</p>
+                {{/preview}}
+                {{^preview}}
+                <p class="card-text text-muted font-italic">{{#str}} nolinesrecorded, mod_dialoguebuilder {{/str}}</p>
+                {{/preview}}
+            </div>
+            <div class="card-footer bg-white border-top-0 text-center">
+                <a href="{{viewurl}}" class="btn btn-primary w-100">{{#str}} viewdialogue, mod_dialoguebuilder {{/str}}</a>
+            </div>
+        </div>
+    </div>
+    {{/cards}}
+</div>

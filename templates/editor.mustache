@@ -36,7 +36,6 @@
 
     <form action="edit.php" method="POST" id="mod-dialoguebuilder__submit-form" enctype="multipart/form-data">
         <input type="hidden" name="id" value="{{cmid}}">
-        <input type="hidden" name="action" value="save">
         <input type="hidden" name="sesskey" value="{{sesskey}}">
         <input type="hidden" name="dialoguedata" id="mod-dialoguebuilder__dialoguedata">
 
@@ -78,9 +77,19 @@
             <!-- Submission Actions -->
             <div class="d-flex justify-content-end gap-2 mt-3">
                 <a href="view.php?id={{cmid}}" class="btn btn-outline-secondary">{{#str}} cancel, core {{/str}}</a>
-                <button type="submit" class="btn btn-success">
-                    <i class="fa fa-save" aria-hidden="true"></i> {{#str}} savescript, mod_dialoguebuilder {{/str}}
+                {{^is_submitted}}
+                <button type="submit" name="action" value="save_draft" class="btn btn-outline-primary" id="mod-dialoguebuilder__save-draft-btn">
+                    <i class="fa fa-save" aria-hidden="true"></i> {{#str}} savedraft, mod_dialoguebuilder {{/str}}
                 </button>
+                <button type="submit" name="action" value="submit" class="btn btn-success" id="mod-dialoguebuilder__submit-btn">
+                    <i class="fa fa-paper-plane" aria-hidden="true"></i> {{#str}} submittask, mod_dialoguebuilder {{/str}}
+                </button>
+                {{/is_submitted}}
+                {{#is_submitted}}
+                <button type="submit" name="action" value="submit" class="btn btn-success" id="mod-dialoguebuilder__submit-btn">
+                    <i class="fa fa-save" aria-hidden="true"></i> {{#str}} savechanges, core {{/str}}
+                </button>
+                {{/is_submitted}}
             </div>
         </div>
     </div>
