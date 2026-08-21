@@ -101,7 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($action === 'save_draft' || $actio
             $existingchars = $DB->get_records('dialoguebuilder_chars', ['submissionid' => $submission->id]);
 
             foreach ($dialoguedata->characters as $char) {
-                // If it's an existing character (id matches an existing DB record)
+                // If it's an existing character (id matches an existing DB record).
                 if (isset($existingchars[$char->id])) {
                     $dbchar = $existingchars[$char->id];
                     $dbchar->name = clean_param($char->name, PARAM_TEXT);
@@ -119,7 +119,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($action === 'save_draft' || $actio
                 $submittedcharids[] = $charid;
 
                 // Handle avatar upload if present.
-                if (isset($_FILES['avatars']) && isset($_FILES['avatars']['tmp_name'][$char->id]) && $_FILES['avatars']['error'][$char->id] === UPLOAD_ERR_OK) {
+                if (
+                    isset($_FILES['avatars']) &&
+                    isset($_FILES['avatars']['tmp_name'][$char->id]) &&
+                    $_FILES['avatars']['error'][$char->id] === UPLOAD_ERR_OK
+                ) {
                     $tmpname = $_FILES['avatars']['tmp_name'][$char->id];
                     $filesize = filesize($tmpname);
 
@@ -169,7 +173,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($action === 'save_draft' || $actio
             }
         }
 
-        $msg = ($action === 'submit') ? get_string('tasksubmitted', 'mod_dialoguebuilder') : get_string('draftsaved', 'mod_dialoguebuilder');
+        $msg = ($action === 'submit') ?
+            get_string('tasksubmitted', 'mod_dialoguebuilder') :
+            get_string('draftsaved', 'mod_dialoguebuilder');
 
         // Redirect to view.php with success message.
         redirect(
@@ -200,7 +206,14 @@ if ($submission) {
         $files = $fs->get_area_files($context->id, 'mod_dialoguebuilder', 'avatar', $c->id, 'id DESC', false);
         if (!empty($files)) {
             $file = reset($files);
-            $avatarurl = moodle_url::make_pluginfile_url($file->get_contextid(), $file->get_component(), $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename())->out(false);
+            $avatarurl = moodle_url::make_pluginfile_url(
+                $file->get_contextid(),
+                $file->get_component(),
+                $file->get_filearea(),
+                $file->get_itemid(),
+                $file->get_filepath(),
+                $file->get_filename()
+            )->out(false);
         }
 
         $characters[] = [

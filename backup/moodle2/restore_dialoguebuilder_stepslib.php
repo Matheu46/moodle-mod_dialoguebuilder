@@ -22,23 +22,34 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Structure step to restore one dialoguebuilder activity.
  */
 class restore_dialoguebuilder_activity_structure_step extends restore_activity_structure_step {
+    /**
+     * Define the structure of the backup file.
+     *
+     * @return restore_path_element[] Array of elements.
+     */
     protected function define_structure() {
         $paths = [];
 
         $paths[] = new restore_path_element('dialoguebuilder', '/activity/dialoguebuilder');
         $paths[] = new restore_path_element('dialoguebuilder_sub', '/activity/dialoguebuilder/submissions/submission');
-        $paths[] = new restore_path_element('dialoguebuilder_char', '/activity/dialoguebuilder/submissions/submission/characters/character');
+        $paths[] = new restore_path_element(
+            'dialoguebuilder_char',
+            '/activity/dialoguebuilder/submissions/submission/characters/character'
+        );
         $paths[] = new restore_path_element('dialoguebuilder_line', '/activity/dialoguebuilder/submissions/submission/lines/line');
 
         return $this->prepare_activity_structure($paths);
     }
 
+    /**
+     * Process the dialoguebuilder element.
+     *
+     * @param array $data The data to be restored.
+     */
     protected function process_dialoguebuilder($data) {
         global $DB;
 
@@ -51,12 +62,17 @@ class restore_dialoguebuilder_activity_structure_step extends restore_activity_s
         $data->timeopen = $this->apply_date_offset($data->timeopen);
         $data->timeclose = $this->apply_date_offset($data->timeclose);
 
-        // insert the dialoguebuilder record.
+        // Insert the dialoguebuilder record.
         $newitemid = $DB->insert_record('dialoguebuilder', $data);
-        // immediately after inserting "activity" record, call this.
+        // Immediately after inserting "activity" record, call this.
         $this->apply_activity_instance($newitemid);
     }
 
+    /**
+     * Process the dialoguebuilder_sub element.
+     *
+     * @param array $data The data to be restored.
+     */
     protected function process_dialoguebuilder_sub($data) {
         global $DB;
 
@@ -73,6 +89,11 @@ class restore_dialoguebuilder_activity_structure_step extends restore_activity_s
         $this->set_mapping('dialoguebuilder_sub', $oldid, $newitemid);
     }
 
+    /**
+     * Process the dialoguebuilder_char element.
+     *
+     * @param array $data The data to be restored.
+     */
     protected function process_dialoguebuilder_char($data) {
         global $DB;
 
@@ -85,6 +106,11 @@ class restore_dialoguebuilder_activity_structure_step extends restore_activity_s
         $this->set_mapping('dialoguebuilder_char', $oldid, $newitemid);
     }
 
+    /**
+     * Process the dialoguebuilder_line element.
+     *
+     * @param array $data The data to be restored.
+     */
     protected function process_dialoguebuilder_line($data) {
         global $DB;
 
@@ -98,6 +124,9 @@ class restore_dialoguebuilder_activity_structure_step extends restore_activity_s
         $this->set_mapping('dialoguebuilder_line', $oldid, $newitemid);
     }
 
+    /**
+     * Actions to be executed after the restore is completed.
+     */
     protected function after_execute() {
         // Add dialoguebuilder related files, no need to match by itemname (just internally handled context).
         $this->add_related_files('mod_dialoguebuilder', 'intro', null);

@@ -116,7 +116,11 @@ if ($action === 'view' && $subid) {
     echo html_writer::start_tag('div');
     if ($prevsubid) {
         $prevurl = new moodle_url('/mod/dialoguebuilder/report.php', ['id' => $cm->id, 'action' => 'view', 'subid' => $prevsubid]);
-        echo html_writer::link($prevurl, '&laquo; ' . get_string('previous', 'mod_dialoguebuilder'), ['class' => 'btn btn-outline-primary mr-2']);
+        echo html_writer::link(
+            $prevurl,
+            '&laquo; ' . get_string('previous', 'mod_dialoguebuilder'),
+            ['class' => 'btn btn-outline-primary mr-2']
+        );
     }
 
     if ($currentindex !== false) {
@@ -125,7 +129,11 @@ if ($action === 'view' && $subid) {
 
     if ($nextsubid) {
         $nexturl = new moodle_url('/mod/dialoguebuilder/report.php', ['id' => $cm->id, 'action' => 'view', 'subid' => $nextsubid]);
-        echo html_writer::link($nexturl, get_string('next', 'mod_dialoguebuilder') . ' &raquo;', ['class' => 'btn btn-outline-primary ml-2']);
+        echo html_writer::link(
+            $nexturl,
+            get_string('next', 'mod_dialoguebuilder') . ' &raquo;',
+            ['class' => 'btn btn-outline-primary ml-2']
+        );
     }
     echo html_writer::end_tag('div');
 
@@ -142,7 +150,14 @@ if ($action === 'view' && $subid) {
         $files = $fs->get_area_files($context->id, 'mod_dialoguebuilder', 'avatar', $char->id, 'id DESC', false);
         if (!empty($files)) {
             $file = reset($files);
-            $avatarurl = moodle_url::make_pluginfile_url($file->get_contextid(), $file->get_component(), $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename())->out(false);
+            $avatarurl = moodle_url::make_pluginfile_url(
+                $file->get_contextid(),
+                $file->get_component(),
+                $file->get_filearea(),
+                $file->get_itemid(),
+                $file->get_filepath(),
+                $file->get_filename()
+            )->out(false);
         }
         if (empty($avatarurl)) {
             $avatarurl = $OUTPUT->image_url('u/f2')->out(false);
@@ -169,7 +184,9 @@ if ($action === 'view' && $subid) {
         $templatedata = ['lines' => [], 'chatid' => 'chat-' . uniqid(), 'is_static' => true];
         $lastcharid = null;
         foreach ($lines as $line) {
-            $charinfo = isset($charmap[$line->characterid]) ? $charmap[$line->characterid] : ['name' => get_string('unknown', 'mod_dialoguebuilder'), 'avatarurl' => ''];
+            $charinfo = isset($charmap[$line->characterid]) ?
+                $charmap[$line->characterid] :
+                ['name' => get_string('unknown', 'mod_dialoguebuilder'), 'avatarurl' => ''];
             $templatedata['lines'][] = [
                 'charname' => $charinfo['name'],
                 'avatarurl' => $charinfo['avatarurl'],
@@ -180,12 +197,15 @@ if ($action === 'view' && $subid) {
             $lastcharid = $line->characterid;
         }
         echo $OUTPUT->render_from_template('mod_dialoguebuilder/chat_view', $templatedata);
-        echo $OUTPUT->render_from_template('mod_dialoguebuilder/player', ['chatid' => $templatedata['chatid'], 'is_static' => true]);
+        echo $OUTPUT->render_from_template(
+            'mod_dialoguebuilder/player',
+            ['chatid' => $templatedata['chatid'], 'is_static' => true]
+        );
     }
 
-    echo html_writer::end_tag('div'); // end col-lg-8
+    echo html_writer::end_tag('div'); // End col-lg-8.
 
-    // Grading form column
+    // Grading form column.
     echo html_writer::start_tag('div', ['class' => 'col-lg-4 col-md-12']);
 
     // Grading form.
@@ -248,7 +268,12 @@ if ($action === 'view' && $subid) {
         if ($nextsubid) {
             echo html_writer::empty_tag(
                 'input',
-                ['type' => 'submit', 'name' => 'saveandnext', 'value' => get_string('saveandnext', 'mod_dialoguebuilder'), 'class' => 'btn btn-success']
+                [
+                    'type' => 'submit',
+                    'name' => 'saveandnext',
+                    'value' => get_string('saveandnext', 'mod_dialoguebuilder'),
+                    'class' => 'btn btn-success',
+                ]
             );
         }
         echo html_writer::end_tag('div');
@@ -257,8 +282,8 @@ if ($action === 'view' && $subid) {
         echo $OUTPUT->box_end();
     }
 
-    echo html_writer::end_tag('div'); // end col-lg-4
-    echo html_writer::end_tag('div'); // end row
+    echo html_writer::end_tag('div'); // End col-lg-4.
+    echo html_writer::end_tag('div'); // End row.
 } else {
     // List all submissions.
     $PAGE->set_title(get_string('submissions', 'mod_dialoguebuilder'));
@@ -308,7 +333,9 @@ if ($action === 'view' && $subid) {
 
             $gradedisplay = isset($sub->grade) ? format_float($sub->grade, 1) : '-';
 
-            $statusstr = ($sub->status === 'submitted') ? get_string('status_submitted', 'mod_dialoguebuilder') : get_string('status_draft', 'mod_dialoguebuilder');
+            $statusstr = ($sub->status === 'submitted') ?
+                get_string('status_submitted', 'mod_dialoguebuilder') :
+                get_string('status_draft', 'mod_dialoguebuilder');
 
             $table->data[] = [
                 $fullname,

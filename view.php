@@ -60,8 +60,15 @@ if (has_capability('moodle/course:manageactivities', $context)) {
     echo $OUTPUT->heading(get_string('gradingsummary', 'mod_dialoguebuilder'), 3);
 
     $participants = count_enrolled_users($context, 'mod/dialoguebuilder:submit');
-    $submissioncount = $DB->count_records('dialoguebuilder_subs', ['dialoguebuilderid' => $dialoguebuilder->id, 'status' => 'submitted']);
-    $needsgrading = $DB->count_records_select('dialoguebuilder_subs', 'dialoguebuilderid = ? AND grade IS NULL AND status = ?', [$dialoguebuilder->id, 'submitted']);
+    $submissioncount = $DB->count_records(
+        'dialoguebuilder_subs',
+        ['dialoguebuilderid' => $dialoguebuilder->id, 'status' => 'submitted']
+    );
+    $needsgrading = $DB->count_records_select(
+        'dialoguebuilder_subs',
+        'dialoguebuilderid = ? AND grade IS NULL AND status = ?',
+        [$dialoguebuilder->id, 'submitted']
+    );
 
     $timeremaining = '';
     if ($dialoguebuilder->timeclose > 0) {
@@ -69,7 +76,11 @@ if (has_capability('moodle/course:manageactivities', $context)) {
         if ($dialoguebuilder->timeclose > $now) {
             $timeremaining = format_time($dialoguebuilder->timeclose - $now);
         } else {
-            $timeremaining = html_writer::tag('span', get_string('assignmentisdue', 'mod_dialoguebuilder'), ['class' => 'text-danger']);
+            $timeremaining = html_writer::tag(
+                'span',
+                get_string('assignmentisdue', 'mod_dialoguebuilder'),
+                ['class' => 'text-danger']
+            );
         }
     }
 
@@ -91,7 +102,12 @@ if (has_capability('moodle/course:manageactivities', $context)) {
 
     $reporturl = new moodle_url('/mod/dialoguebuilder/report.php', ['id' => $cm->id]);
     echo html_writer::start_tag('div', ['class' => 'text-center mt-3 mb-2']);
-    echo $OUTPUT->single_button($reporturl, get_string('viewsubmissions', 'mod_dialoguebuilder'), 'get', ['type' => \single_button::BUTTON_PRIMARY]);
+    echo $OUTPUT->single_button(
+        $reporturl,
+        get_string('viewsubmissions', 'mod_dialoguebuilder'),
+        'get',
+        ['type' => \single_button::BUTTON_PRIMARY]
+    );
     echo html_writer::end_tag('div');
 
     echo $OUTPUT->box_end();
@@ -117,7 +133,14 @@ if (has_capability('moodle/course:manageactivities', $context)) {
             $files = $fs->get_area_files($context->id, 'mod_dialoguebuilder', 'avatar', $char->id, 'id DESC', false);
             if (!empty($files)) {
                 $file = reset($files);
-                $avatarurl = moodle_url::make_pluginfile_url($file->get_contextid(), $file->get_component(), $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename())->out(false);
+                $avatarurl = moodle_url::make_pluginfile_url(
+                    $file->get_contextid(),
+                    $file->get_component(),
+                    $file->get_filearea(),
+                    $file->get_itemid(),
+                    $file->get_filepath(),
+                    $file->get_filename()
+                )->out(false);
             }
             if (empty($avatarurl)) {
                 $avatarurl = $OUTPUT->image_url('u/f2')->out(false);
@@ -137,7 +160,9 @@ if (has_capability('moodle/course:manageactivities', $context)) {
         $templatedata = ['lines' => [], 'chatid' => 'chat-' . uniqid()];
         $lastcharid = null;
         foreach ($lines as $line) {
-            $charinfo = isset($charmap[$line->characterid]) ? $charmap[$line->characterid] : ['name' => get_string('unknown', 'mod_dialoguebuilder'), 'avatarurl' => ''];
+            $charinfo = isset($charmap[$line->characterid]) ?
+                $charmap[$line->characterid] :
+                ['name' => get_string('unknown', 'mod_dialoguebuilder'), 'avatarurl' => ''];
             $templatedata['lines'][] = [
                 'charname' => $charinfo['name'],
                 'avatarurl' => $charinfo['avatarurl'],
@@ -148,7 +173,9 @@ if (has_capability('moodle/course:manageactivities', $context)) {
             $lastcharid = $line->characterid;
         }
 
-        $statusstr = ($submission->status === 'submitted') ? get_string('status_submitted', 'mod_dialoguebuilder') : get_string('status_draft', 'mod_dialoguebuilder');
+        $statusstr = ($submission->status === 'submitted') ?
+            get_string('status_submitted', 'mod_dialoguebuilder') :
+            get_string('status_draft', 'mod_dialoguebuilder');
         $badgeclass = ($submission->status === 'submitted') ? 'badge badge-success bg-success' : 'badge badge-warning bg-warning';
 
         echo html_writer::tag(
@@ -180,7 +207,9 @@ if (has_capability('moodle/course:manageactivities', $context)) {
     // Render a button to start/edit the dialogue only if open.
     if ($isopen) {
         $url = new moodle_url('/mod/dialoguebuilder/edit.php', ['id' => $cm->id]);
-        $btntext = $submission ? get_string('editdialogue', 'mod_dialoguebuilder') : get_string('startdialogue', 'mod_dialoguebuilder');
+        $btntext = $submission ?
+            get_string('editdialogue', 'mod_dialoguebuilder') :
+            get_string('startdialogue', 'mod_dialoguebuilder');
         echo html_writer::start_tag('div', ['class' => 'text-center mt-3 mb-3']);
         echo $OUTPUT->single_button($url, $btntext, 'get', ['type' => \single_button::BUTTON_PRIMARY]);
         echo html_writer::end_tag('div');
@@ -195,15 +224,15 @@ if (isset($dialoguebuilder->gallerymode) && $dialoguebuilder->gallerymode > 0) {
         $showgallery = true;
     } else {
         $now = time();
-        $has_submitted = (isset($submission) && $submission->status === 'submitted');
+        $hassubmitted = (isset($submission) && $submission->status === 'submitted');
 
-        if ($dialoguebuilder->gallerymode == 1) { // Free
+        if ($dialoguebuilder->gallerymode == 1) { // Free.
             $showgallery = true;
-        } else if ($dialoguebuilder->gallerymode == 2) { // Post before view
-            if ($has_submitted) {
+        } else if ($dialoguebuilder->gallerymode == 2) { // Post before view.
+            if ($hassubmitted) {
                 $showgallery = true;
             }
-        } else if ($dialoguebuilder->gallerymode == 3) { // After deadline
+        } else if ($dialoguebuilder->gallerymode == 3) { // After deadline.
             if ($dialoguebuilder->timeclose > 0 && $now > $dialoguebuilder->timeclose) {
                 $showgallery = true;
             }
@@ -214,7 +243,12 @@ if (isset($dialoguebuilder->gallerymode) && $dialoguebuilder->gallerymode > 0) {
 if ($showgallery) {
     $galleryurl = new moodle_url('/mod/dialoguebuilder/gallery.php', ['id' => $cm->id]);
     echo html_writer::start_tag('div', ['class' => 'text-center mt-4 mb-3']);
-    echo $OUTPUT->single_button($galleryurl, get_string('viewgallery', 'mod_dialoguebuilder'), 'get', ['type' => \single_button::BUTTON_SECONDARY, 'class' => 'btn']);
+    echo $OUTPUT->single_button(
+        $galleryurl,
+        get_string('viewgallery', 'mod_dialoguebuilder'),
+        'get',
+        ['type' => \single_button::BUTTON_SECONDARY, 'class' => 'btn']
+    );
     echo html_writer::end_tag('div');
 }
 

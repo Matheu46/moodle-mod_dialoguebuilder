@@ -18,7 +18,7 @@
  * Capability definitions for the dialoguebuilder module.
  *
  * @package    mod_dialoguebuilder
- * @copyright  2026 Matheus
+ * @copyright  2026 Matheus Mathias
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

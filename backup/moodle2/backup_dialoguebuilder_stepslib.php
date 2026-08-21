@@ -22,12 +22,15 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Define the complete dialoguebuilder structure for backup, with file and id annotations.
  */
 class backup_dialoguebuilder_activity_structure_step extends backup_activity_structure_step {
+    /**
+     * Define the structure of the backup file.
+     *
+     * @return backup_nested_element The defined structure.
+     */
     protected function define_structure() {
 
         // To know if we are including userinfo.

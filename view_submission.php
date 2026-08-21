@@ -38,7 +38,7 @@ $context = context_module::instance($cm->id);
 $PAGE->set_url(new moodle_url('/mod/dialoguebuilder/view_submission.php', ['id' => $cm->id, 'subid' => $subid]));
 $PAGE->set_context($context);
 
-// Fetch submission
+// Fetch submission.
 $submission = $DB->get_record(
     'dialoguebuilder_subs',
     ['id' => $subid, 'dialoguebuilderid' => $dialoguebuilder->id],
@@ -50,27 +50,27 @@ $user = $DB->get_record('user', ['id' => $submission->userid], '*', MUST_EXIST);
 $PAGE->set_title(get_string('viewdialogue', 'mod_dialoguebuilder'));
 $PAGE->set_heading(fullname($user));
 
-// Gallery visibility checks
+// Gallery visibility checks.
 $canview = false;
 $isteacher = has_capability('moodle/course:manageactivities', $context);
 if ($isteacher) {
     $canview = true;
 } else if (isset($dialoguebuilder->gallerymode) && $dialoguebuilder->gallerymode > 0) {
-    if ($submission->status === 'submitted') { // Can only view submitted works in gallery
+    if ($submission->status === 'submitted') { // Can only view submitted works in gallery.
         $now = time();
         $mysubmission = $DB->get_record('dialoguebuilder_subs', [
             'dialoguebuilderid' => $dialoguebuilder->id,
             'userid' => $USER->id,
         ]);
-        $has_submitted = ($mysubmission && $mysubmission->status === 'submitted');
+        $hassubmitted = ($mysubmission && $mysubmission->status === 'submitted');
 
-        if ($dialoguebuilder->gallerymode == 1) { // Free
+        if ($dialoguebuilder->gallerymode == 1) { // Free.
             $canview = true;
-        } else if ($dialoguebuilder->gallerymode == 2) { // Post before view
-            if ($has_submitted) {
+        } else if ($dialoguebuilder->gallerymode == 2) { // Post before view.
+            if ($hassubmitted) {
                 $canview = true;
             }
-        } else if ($dialoguebuilder->gallerymode == 3) { // After deadline
+        } else if ($dialoguebuilder->gallerymode == 3) { // After deadline.
             if ($dialoguebuilder->timeclose > 0 && $now > $dialoguebuilder->timeclose) {
                 $canview = true;
             }
@@ -101,7 +101,14 @@ foreach ($characters as $char) {
     $files = $fs->get_area_files($context->id, 'mod_dialoguebuilder', 'avatar', $char->id, 'id DESC', false);
     if (!empty($files)) {
         $file = reset($files);
-        $avatarurl = moodle_url::make_pluginfile_url($file->get_contextid(), $file->get_component(), $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename())->out(false);
+        $avatarurl = moodle_url::make_pluginfile_url(
+            $file->get_contextid(),
+            $file->get_component(),
+            $file->get_filearea(),
+            $file->get_itemid(),
+            $file->get_filepath(),
+            $file->get_filename()
+        )->out(false);
     }
     if (empty($avatarurl)) {
         $avatarurl = $OUTPUT->image_url('u/f2')->out(false);
@@ -128,7 +135,9 @@ if (empty($lines)) {
     $templatedata = ['lines' => [], 'chatid' => 'chat-' . uniqid(), 'is_static' => false];
     $lastcharid = null;
     foreach ($lines as $line) {
-        $charinfo = isset($charmap[$line->characterid]) ? $charmap[$line->characterid] : ['name' => get_string('unknown', 'mod_dialoguebuilder'), 'avatarurl' => ''];
+        $charinfo = isset($charmap[$line->characterid]) ?
+            $charmap[$line->characterid] :
+            ['name' => get_string('unknown', 'mod_dialoguebuilder'), 'avatarurl' => ''];
         $templatedata['lines'][] = [
             'charname' => $charinfo['name'],
             'avatarurl' => $charinfo['avatarurl'],

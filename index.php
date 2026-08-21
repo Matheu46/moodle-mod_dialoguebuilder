@@ -18,7 +18,7 @@
  * Lists all dialoguebuilder instances in a given course.
  *
  * @package    mod_dialoguebuilder
- * @copyright  2026 Matheus
+ * @copyright  2026 Matheus Mathias
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

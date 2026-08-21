@@ -32,8 +32,6 @@ use core_privacy\local\request\writer;
 use core_privacy\local\request\userlist;
 use core_privacy\local\request\approved_userlist;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Privacy provider for mod_dialoguebuilder.
  */
@@ -134,7 +132,8 @@ class provider implements
         $userid = $contextlist->get_user()->id;
 
         [$insql, $inparams] = $DB->get_in_or_equal($contextlist->get_contextids(), SQL_PARAMS_NAMED);
-        $sql = "SELECT c.id AS contextid, cm.id AS cmid, db.name AS dbname, ds.id AS subid, ds.status, ds.timecreated, ds.grade, ds.feedback, ds.timemodified
+        $sql = "SELECT c.id AS contextid, cm.id AS cmid, db.name AS dbname, ds.id AS subid,
+                       ds.status, ds.timecreated, ds.grade, ds.feedback, ds.timemodified
                   FROM {context} c
             INNER JOIN {course_modules} cm ON cm.id = c.instanceid AND c.contextlevel = :contextlevel
             INNER JOIN {modules} m ON m.id = cm.module AND m.name = :modname
@@ -160,7 +159,10 @@ class provider implements
                 'timemodified' => \core_privacy\local\request\transform::datetime($submission->timemodified),
             ];
 
-            writer::with_context($context)->export_data([get_string('pluginname', 'mod_dialoguebuilder'), get_string('submission', 'mod_dialoguebuilder')], $subdata);
+            writer::with_context($context)->export_data(
+                [get_string('pluginname', 'mod_dialoguebuilder'), get_string('submission', 'mod_dialoguebuilder')],
+                $subdata
+            );
 
             // Fetch characters and lines for this submission.
             $characters = $DB->get_records('dialoguebuilder_chars', ['submissionid' => $submission->subid]);
@@ -181,7 +183,11 @@ class provider implements
                             'text' => $line->text_content,
                         ];
                     }
-                    writer::with_context($context)->export_related_data([get_string('pluginname', 'mod_dialoguebuilder'), get_string('submission', 'mod_dialoguebuilder')], 'dialogue', $linedata);
+                    writer::with_context($context)->export_related_data(
+                        [get_string('pluginname', 'mod_dialoguebuilder'), get_string('submission', 'mod_dialoguebuilder')],
+                        'dialogue',
+                        $linedata
+                    );
                 }
             }
         }

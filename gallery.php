@@ -39,7 +39,7 @@ $PAGE->set_context($context);
 $PAGE->set_title(get_string('viewgallery', 'mod_dialoguebuilder'));
 $PAGE->set_heading(format_string($course->fullname));
 
-// Gallery visibility checks
+// Gallery visibility checks.
 $canview = false;
 $isteacher = has_capability('moodle/course:manageactivities', $context);
 if (isset($dialoguebuilder->gallerymode) && $dialoguebuilder->gallerymode > 0) {
@@ -51,15 +51,15 @@ if (isset($dialoguebuilder->gallerymode) && $dialoguebuilder->gallerymode > 0) {
             'dialoguebuilderid' => $dialoguebuilder->id,
             'userid' => $USER->id,
         ]);
-        $has_submitted = ($submission && $submission->status === 'submitted');
+        $hassubmitted = ($submission && $submission->status === 'submitted');
 
-        if ($dialoguebuilder->gallerymode == 1) { // Free
+        if ($dialoguebuilder->gallerymode == 1) { // Free.
             $canview = true;
-        } else if ($dialoguebuilder->gallerymode == 2) { // Post before view
-            if ($has_submitted) {
+        } else if ($dialoguebuilder->gallerymode == 2) { // Post before view.
+            if ($hassubmitted) {
                 $canview = true;
             }
-        } else if ($dialoguebuilder->gallerymode == 3) { // After deadline
+        } else if ($dialoguebuilder->gallerymode == 3) { // After deadline.
             if ($dialoguebuilder->timeclose > 0 && $now > $dialoguebuilder->timeclose) {
                 $canview = true;
             }
@@ -75,10 +75,11 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('viewgallery', 'mod_dialoguebuilder'));
 
 echo html_writer::start_tag('div', ['class' => 'd-flex justify-content-between mb-3']);
-echo html_writer::link(new moodle_url('/mod/dialoguebuilder/view.php', ['id' => $cm->id]), get_string('back', 'core'), ['class' => 'btn btn-secondary']);
+$backurl = new moodle_url('/mod/dialoguebuilder/view.php', ['id' => $cm->id]);
+echo html_writer::link($backurl, get_string('back', 'core'), ['class' => 'btn btn-secondary']);
 echo html_writer::end_tag('div');
 
-// Fetch all submitted submissions
+// Fetch all submitted submissions.
 $userfieldsapi = \core_user\fields::for_name();
 $userfields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
 
@@ -99,50 +100,69 @@ if (empty($submissions)) {
     foreach ($submissions as $sub) {
         $fullname = fullname($sub);
 
-        // Find characters to get avatars and title (first line)
+        // Find characters to get avatars and title (first line).
         $characters = $DB->get_records('dialoguebuilder_chars', ['submissionid' => $sub->id], 'id ASC');
         $avatars = [];
         $preview = '';
 
         if (!empty($characters)) {
-            $char_count = 0;
+            $charcount = 0;
             foreach ($characters as $char) {
-                if ($char_count >= 2) {
+                if ($charcount >= 2) {
                     break;
                 }
 
-                $avatar_url = $OUTPUT->image_url('u/f2')->out(false);
+                $avatarurl = $OUTPUT->image_url('u/f2')->out(false);
                 $files = $fs->get_area_files($context->id, 'mod_dialoguebuilder', 'avatar', $char->id, 'id DESC', false);
                 if (!empty($files)) {
                     $file = reset($files);
-                    $avatar_url = moodle_url::make_pluginfile_url($file->get_contextid(), $file->get_component(), $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename())->out(false);
+                    $avatarurl = moodle_url::make_pluginfile_url(
+                        $file->get_contextid(),
+                        $file->get_component(),
+                        $file->get_filearea(),
+                        $file->get_itemid(),
+                        $file->get_filepath(),
+                        $file->get_filename()
+                    )->out(false);
                 }
 
                 $avatars[] = [
-                    'url' => $avatar_url,
-                    'is_second' => ($char_count === 1),
+                    'url' => $avatarurl,
+                    'is_second' => ($charcount === 1),
                 ];
-                $char_count++;
+                $charcount++;
             }
 
-            // Get first line for preview
-            $firstline = $DB->get_record('dialoguebuilder_lines', ['submissionid' => $sub->id], '*', IGNORE_MULTIPLE, 'sortorder ASC');
+            // Get first line for preview.
+            $firstline = $DB->get_record(
+                'dialoguebuilder_lines',
+                ['submissionid' => $sub->id],
+                '*',
+                IGNORE_MULTIPLE,
+                'sortorder ASC'
+            );
             if ($firstline) {
                 $preview = shorten_text(strip_tags($firstline->text_content), 60);
             }
         } else {
-            // Fallback if no characters
+            // Fallback if no characters.
             $avatars[] = [
                 'url' => $OUTPUT->image_url('u/f2')->out(false),
                 'is_second' => false,
             ];
         }
 
+        $viewurl = new moodle_url(
+            '/mod/dialoguebuilder/view_submission.php',
+            ['id' => $cm->id, 'subid' => $sub->id],
+            'region-main'
+        );
+
         $cards[] = [
             'authorname' => $fullname,
             'avatars' => $avatars,
             'preview' => $preview,
-            'viewurl' => (new moodle_url('/mod/dialoguebuilder/view_submission.php', ['id' => $cm->id, 'subid' => $sub->id], 'region-main'))->out(false),
+            'viewurl' => $viewurl->out(false),
         ];
     }
 
