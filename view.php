@@ -157,7 +157,7 @@ if (has_capability('moodle/course:manageactivities', $context)) {
             ['class' => 'mb-3 text-center']
         );
 
-        echo $OUTPUT->heading(get_string('yourdialogue', 'mod_dialoguebuilder'), 3);
+        echo $OUTPUT->heading(get_string('yourdialogue', 'mod_dialoguebuilder'), 3, 'text-center');
         echo $OUTPUT->render_from_template('mod_dialoguebuilder/chat_view', $templatedata);
         echo $OUTPUT->render_from_template('mod_dialoguebuilder/player', ['chatid' => $templatedata['chatid']]);
     }
@@ -180,7 +180,9 @@ if (has_capability('moodle/course:manageactivities', $context)) {
     if ($isopen) {
         $url = new moodle_url('/mod/dialoguebuilder/edit.php', ['id' => $cm->id]);
         $btntext = $submission ? get_string('editdialogue', 'mod_dialoguebuilder') : get_string('startdialogue', 'mod_dialoguebuilder');
+        echo html_writer::start_tag('div', ['class' => 'text-center mt-3 mb-3']);
         echo $OUTPUT->single_button($url, $btntext, 'get', ['type' => \single_button::BUTTON_PRIMARY]);
+        echo html_writer::end_tag('div');
     }
 }
 
