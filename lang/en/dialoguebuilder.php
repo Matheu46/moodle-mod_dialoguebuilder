@@ -115,3 +115,22 @@ $string['assignmentisdue'] = 'Assignment is due';
 $string['nodialoguefound'] = 'No dialogue found for this submission.';
 $string['nolinesrecorded'] = 'No lines recorded yet.';
 $string['downloadasimage'] = 'Download as image';
+
+// Privacy metadata.
+$string['privacy:metadata:dialoguebuilder_subs'] = 'Information about student submissions in the Dialogue Builder activity.';
+$string['privacy:metadata:dialoguebuilder_subs:dialoguebuilderid'] = 'The ID of the Dialogue Builder activity.';
+$string['privacy:metadata:dialoguebuilder_subs:userid'] = 'The ID of the user who made the submission.';
+$string['privacy:metadata:dialoguebuilder_subs:status'] = 'The status of the submission (e.g., draft or submitted).';
+$string['privacy:metadata:dialoguebuilder_subs:timecreated'] = 'The time when the submission was first created.';
+$string['privacy:metadata:dialoguebuilder_subs:grade'] = 'The grade assigned to the submission by the teacher.';
+$string['privacy:metadata:dialoguebuilder_subs:feedback'] = 'The feedback provided by the teacher.';
+$string['privacy:metadata:dialoguebuilder_subs:timemodified'] = 'The time when the submission was last modified.';
+
+$string['privacy:metadata:dialoguebuilder_chars'] = 'Information about the characters created within a submission.';
+$string['privacy:metadata:dialoguebuilder_chars:submissionid'] = 'The ID of the submission to which the character belongs.';
+$string['privacy:metadata:dialoguebuilder_chars:name'] = 'The name of the character.';
+
+$string['privacy:metadata:dialoguebuilder_lines'] = 'Information about the dialogue lines created within a submission.';
+$string['privacy:metadata:dialoguebuilder_lines:submissionid'] = 'The ID of the submission to which the line belongs.';
+$string['privacy:metadata:dialoguebuilder_lines:characterid'] = 'The ID of the character speaking the line.';
+$string['privacy:metadata:dialoguebuilder_lines:text_content'] = 'The actual text content of the dialogue line.';
