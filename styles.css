@@ -61,7 +61,10 @@
     margin-top: 0;
 }
 .mod-dialoguebuilder__chat-message.mod-dialoguebuilder__same-as-prev {
-    margin-top: 2px;
+    margin-top: 4px;
+}
+.mod-dialoguebuilder__chat-message.mod-dialoguebuilder__same-as-prev .mod-dialoguebuilder__avatar {
+    height: 0px;
 }
 .mod-dialoguebuilder__chat-message.mod-dialoguebuilder__typing, 
 .mod-dialoguebuilder__chat-message.mod-dialoguebuilder__show {
