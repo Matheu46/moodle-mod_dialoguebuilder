@@ -41,7 +41,6 @@ class provider implements
     \core_privacy\local\metadata\provider,
     \core_privacy\local\request\core_userlist_provider,
     \core_privacy\local\request\plugin\provider {
-
     /**
      * Returns metadata.
      *
@@ -56,18 +55,18 @@ class provider implements
             'timecreated' => 'privacy:metadata:dialoguebuilder_subs:timecreated',
             'grade' => 'privacy:metadata:dialoguebuilder_subs:grade',
             'feedback' => 'privacy:metadata:dialoguebuilder_subs:feedback',
-            'timemodified' => 'privacy:metadata:dialoguebuilder_subs:timemodified'
+            'timemodified' => 'privacy:metadata:dialoguebuilder_subs:timemodified',
         ], 'privacy:metadata:dialoguebuilder_subs');
 
         $collection->add_database_table('dialoguebuilder_chars', [
             'submissionid' => 'privacy:metadata:dialoguebuilder_chars:submissionid',
-            'name' => 'privacy:metadata:dialoguebuilder_chars:name'
+            'name' => 'privacy:metadata:dialoguebuilder_chars:name',
         ], 'privacy:metadata:dialoguebuilder_chars');
 
         $collection->add_database_table('dialoguebuilder_lines', [
             'submissionid' => 'privacy:metadata:dialoguebuilder_lines:submissionid',
             'characterid' => 'privacy:metadata:dialoguebuilder_lines:characterid',
-            'text_content' => 'privacy:metadata:dialoguebuilder_lines:text_content'
+            'text_content' => 'privacy:metadata:dialoguebuilder_lines:text_content',
         ], 'privacy:metadata:dialoguebuilder_lines');
 
         return $collection;
@@ -134,7 +133,7 @@ class provider implements
 
         $userid = $contextlist->get_user()->id;
 
-        list($insql, $inparams) = $DB->get_in_or_equal($contextlist->get_contextids(), SQL_PARAMS_NAMED);
+        [$insql, $inparams] = $DB->get_in_or_equal($contextlist->get_contextids(), SQL_PARAMS_NAMED);
         $sql = "SELECT c.id AS contextid, cm.id AS cmid, db.name AS dbname, ds.id AS subid, ds.status, ds.timecreated, ds.grade, ds.feedback, ds.timemodified
                   FROM {context} c
             INNER JOIN {course_modules} cm ON cm.id = c.instanceid AND c.contextlevel = :contextlevel
@@ -146,7 +145,7 @@ class provider implements
         $params = array_merge($inparams, [
             'modname' => 'dialoguebuilder',
             'contextlevel' => CONTEXT_MODULE,
-            'userid' => $userid
+            'userid' => $userid,
         ]);
 
         $submissions = $DB->get_recordset_sql($sql, $params);
@@ -160,7 +159,7 @@ class provider implements
                 'timecreated' => \core_privacy\local\request\transform::datetime($submission->timecreated),
                 'timemodified' => \core_privacy\local\request\transform::datetime($submission->timemodified),
             ];
-            
+
             writer::with_context($context)->export_data([get_string('pluginname', 'mod_dialoguebuilder'), get_string('submission', 'mod_dialoguebuilder')], $subdata);
 
             // Fetch characters and lines for this submission.
@@ -179,7 +178,7 @@ class provider implements
                         $charname = isset($chardata[$line->characterid]) ? $chardata[$line->characterid] : 'Unknown';
                         $linedata[] = (object)[
                             'character' => $charname,
-                            'text' => $line->text_content
+                            'text' => $line->text_content,
                         ];
                     }
                     writer::with_context($context)->export_related_data([get_string('pluginname', 'mod_dialoguebuilder'), get_string('submission', 'mod_dialoguebuilder')], 'dialogue', $linedata);
@@ -247,7 +246,7 @@ class provider implements
 
             $submissions = $DB->get_records('dialoguebuilder_subs', [
                 'dialoguebuilderid' => $cm->instance,
-                'userid' => $userid
+                'userid' => $userid,
             ]);
 
             foreach ($submissions as $sub) {
@@ -286,7 +285,7 @@ class provider implements
             return;
         }
 
-        list($insql, $inparams) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
+        [$insql, $inparams] = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
         $params = array_merge(['dbid' => $cm->instance], $inparams);
         $sql = "SELECT id FROM {dialoguebuilder_subs} WHERE dialoguebuilderid = :dbid AND userid {$insql}";
         $submissions = $DB->get_records_sql($sql, $params);

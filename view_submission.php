@@ -63,7 +63,7 @@ if ($isteacher) {
             'userid' => $USER->id,
         ]);
         $has_submitted = ($mysubmission && $mysubmission->status === 'submitted');
-        
+
         if ($dialoguebuilder->gallerymode == 1) { // Free
             $canview = true;
         } else if ($dialoguebuilder->gallerymode == 2) { // Post before view

@@ -28,7 +28,6 @@ defined('MOODLE_INTERNAL') || die();
  * Structure step to restore one dialoguebuilder activity.
  */
 class restore_dialoguebuilder_activity_structure_step extends restore_activity_structure_step {
-
     protected function define_structure() {
         $paths = [];
 

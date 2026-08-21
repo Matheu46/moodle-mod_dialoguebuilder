@@ -170,7 +170,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($action === 'save_draft' || $actio
         }
 
         $msg = ($action === 'submit') ? get_string('tasksubmitted', 'mod_dialoguebuilder') : get_string('draftsaved', 'mod_dialoguebuilder');
-        
+
         // Redirect to view.php with success message.
         redirect(
             new moodle_url('/mod/dialoguebuilder/view.php', ['id' => $cm->id]),

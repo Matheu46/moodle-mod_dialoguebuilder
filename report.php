@@ -307,7 +307,7 @@ if ($action === 'view' && $subid) {
             );
 
             $gradedisplay = isset($sub->grade) ? format_float($sub->grade, 1) : '-';
-            
+
             $statusstr = ($sub->status === 'submitted') ? get_string('status_submitted', 'mod_dialoguebuilder') : get_string('status_draft', 'mod_dialoguebuilder');
 
             $table->data[] = [

@@ -150,9 +150,10 @@ if (has_capability('moodle/course:manageactivities', $context)) {
 
         $statusstr = ($submission->status === 'submitted') ? get_string('status_submitted', 'mod_dialoguebuilder') : get_string('status_draft', 'mod_dialoguebuilder');
         $badgeclass = ($submission->status === 'submitted') ? 'badge badge-success bg-success' : 'badge badge-warning bg-warning';
-        
-        echo html_writer::tag('div', 
-            html_writer::tag('strong', get_string('status', 'mod_dialoguebuilder') . ': ') . 
+
+        echo html_writer::tag(
+            'div',
+            html_writer::tag('strong', get_string('status', 'mod_dialoguebuilder') . ': ') .
             html_writer::tag('span', $statusstr, ['class' => $badgeclass]),
             ['class' => 'mb-3 text-center']
         );
@@ -195,7 +196,7 @@ if (isset($dialoguebuilder->gallerymode) && $dialoguebuilder->gallerymode > 0) {
     } else {
         $now = time();
         $has_submitted = (isset($submission) && $submission->status === 'submitted');
-        
+
         if ($dialoguebuilder->gallerymode == 1) { // Free
             $showgallery = true;
         } else if ($dialoguebuilder->gallerymode == 2) { // Post before view

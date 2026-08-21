@@ -42,6 +42,7 @@ phpunit.xml
 # Archives of AI tools (Cursor, Copilot, etc)
 # ==========================================
 *.codex
+GEMINI.md
 .cursor/
 .copilot/
 .prompts/

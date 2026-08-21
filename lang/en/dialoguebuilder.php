@@ -30,16 +30,13 @@ $string['modulenameplural'] = 'Dialogue Builders';
 $string['pluginname'] = 'Dialogue Builder';
 $string['pluginadministration'] = 'Dialogue Builder administration';
 
-// Form strings.
 $string['name'] = 'Dialogue name';
 
-// Capabilities.
 $string['dialoguebuilder:addinstance'] = 'Add a new Dialogue Builder activity';
 $string['dialoguebuilder:view'] = 'View Dialogue Builder';
 $string['dialoguebuilder:submit'] = 'Submit a dialogue script';
 $string['dialoguebuilder:grade'] = 'Grade dialogues';
 
-// Report and submission strings.
 $string['viewsubmissions'] = 'View submissions';
 $string['submissions'] = 'Submissions';
 $string['student'] = 'Student';
@@ -70,7 +67,6 @@ $string['timeclose'] = 'Due date';
 $string['notopenyet'] = 'This activity is not open for submissions yet. It will open on {$a}.';
 $string['submissionsclosed'] = 'Submissions for this activity closed on {$a}.';
 
-// Editor strings.
 $string['addcharacter'] = 'Add character';
 $string['dialoguescript'] = 'Dialogue script';
 $string['addline'] = 'Add line';
@@ -88,7 +84,6 @@ $string['unnamed'] = 'Unnamed';
 $string['writelineplaceholder'] = 'Write the line here...';
 $string['character'] = 'Character';
 
-// Player strings.
 $string['play'] = 'Play';
 $string['pause'] = 'Pause';
 $string['replay'] = 'Replay';
@@ -96,7 +91,6 @@ $string['saveandnext'] = 'Save and show next';
 $string['next'] = 'Next';
 $string['previous'] = 'Previous';
 
-// View strings.
 $string['teachersummary'] = 'Teacher summary: {$a} students have submitted dialogues so far.';
 $string['studentguidelines'] = 'Read the teacher\'s guidelines above and create your script.';
 $string['unknown'] = 'Unknown';
@@ -104,7 +98,6 @@ $string['yourdialogue'] = 'Your dialogue';
 $string['editdialogue'] = 'Edit dialogue';
 $string['startdialogue'] = 'Start dialogue';
 
-// Grading summary block strings.
 $string['gradingsummary'] = 'Grading summary';
 $string['hiddenfromstudents'] = 'Hidden from students';
 $string['participants'] = 'Participants';
@@ -116,7 +109,6 @@ $string['nodialoguefound'] = 'No dialogue found for this submission.';
 $string['nolinesrecorded'] = 'No lines recorded yet.';
 $string['downloadasimage'] = 'Download as image';
 
-// Privacy metadata.
 $string['privacy:metadata:dialoguebuilder_subs'] = 'Information about student submissions in the Dialogue Builder activity.';
 $string['privacy:metadata:dialoguebuilder_subs:dialoguebuilderid'] = 'The ID of the Dialogue Builder activity.';
 $string['privacy:metadata:dialoguebuilder_subs:userid'] = 'The ID of the user who made the submission.';

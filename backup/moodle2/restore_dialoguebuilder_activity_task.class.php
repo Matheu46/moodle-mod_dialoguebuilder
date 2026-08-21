@@ -30,7 +30,6 @@ require_once($CFG->dirroot . '/mod/dialoguebuilder/backup/moodle2/restore_dialog
  * Dialoguebuilder restore task that provides all the settings and steps to perform one complete restore of the activity.
  */
 class restore_dialoguebuilder_activity_task extends restore_activity_task {
-
     /**
      * Define (add) particular settings this activity can have.
      */
@@ -49,7 +48,7 @@ class restore_dialoguebuilder_activity_task extends restore_activity_task {
     /**
      * Define the contents in the activity that must be processed by the link decoder.
      */
-    static public function define_decode_contents() {
+    public static function define_decode_contents() {
         $contents = [];
 
         $contents[] = new restore_decode_content('dialoguebuilder', ['intro'], 'dialoguebuilder');
@@ -61,7 +60,7 @@ class restore_dialoguebuilder_activity_task extends restore_activity_task {
     /**
      * Define the decoding rules for links belonging to the activity to be executed by the link decoder.
      */
-    static public function define_decode_rules() {
+    public static function define_decode_rules() {
         $rules = [];
 
         $rules[] = new restore_decode_rule('DIALOGUEBUILDERINDEX', '/mod/dialoguebuilder/index.php?id=$1', 'course');
@@ -76,7 +75,7 @@ class restore_dialoguebuilder_activity_task extends restore_activity_task {
      *
      * @return restore_log_rule[]
      */
-    static public function define_restore_log_rules() {
+    public static function define_restore_log_rules() {
         $rules = [];
         return $rules;
     }

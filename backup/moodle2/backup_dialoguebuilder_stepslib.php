@@ -28,7 +28,6 @@ defined('MOODLE_INTERNAL') || die();
  * Define the complete dialoguebuilder structure for backup, with file and id annotations.
  */
 class backup_dialoguebuilder_activity_structure_step extends backup_activity_structure_step {
-
     protected function define_structure() {
 
         // To know if we are including userinfo.
@@ -37,22 +36,22 @@ class backup_dialoguebuilder_activity_structure_step extends backup_activity_str
         // Define each element separated.
         $dialoguebuilder = new backup_nested_element('dialoguebuilder', ['id'], [
             'name', 'intro', 'introformat', 'grade',
-            'timeopen', 'timeclose', 'timecreated', 'timemodified', 'gallerymode'
+            'timeopen', 'timeclose', 'timecreated', 'timemodified', 'gallerymode',
         ]);
 
         $submissions = new backup_nested_element('submissions');
         $submission = new backup_nested_element('submission', ['id'], [
-            'userid', 'status', 'timecreated', 'grade', 'feedback', 'timemodified'
+            'userid', 'status', 'timecreated', 'grade', 'feedback', 'timemodified',
         ]);
 
         $characters = new backup_nested_element('characters');
         $character = new backup_nested_element('character', ['id'], [
-            'name', 'avatar_itemid'
+            'name', 'avatar_itemid',
         ]);
 
         $lines = new backup_nested_element('lines');
         $line = new backup_nested_element('line', ['id'], [
-            'characterid', 'text_content', 'sortorder'
+            'characterid', 'text_content', 'sortorder',
         ]);
 
         // Build the tree.
@@ -76,14 +75,14 @@ class backup_dialoguebuilder_activity_structure_step extends backup_activity_str
 
         // Define id annotations.
         $dialoguebuilder->annotate_ids('scale', 'grade');
-        
+
         if ($userinfo) {
             $submission->annotate_ids('user', 'userid');
         }
 
         // Define file annotations.
         $dialoguebuilder->annotate_files('mod_dialoguebuilder', 'intro', null); // This file area hasn't itemid.
-        
+
         if ($userinfo) {
             $character->annotate_files('mod_dialoguebuilder', 'avatar', 'id');
         }

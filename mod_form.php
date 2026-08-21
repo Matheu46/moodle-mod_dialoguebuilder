@@ -53,13 +53,13 @@ class mod_dialoguebuilder_mod_form extends moodleform_mod {
 
         // Activity introduction.
         $this->standard_intro_elements();
-        
+
         $mform->addElement('header', 'gallerysettings', get_string('gallerysettings', 'mod_dialoguebuilder'));
         $galleryoptions = [
             0 => get_string('gallerymode_disabled', 'mod_dialoguebuilder'),
             1 => get_string('gallerymode_free', 'mod_dialoguebuilder'),
             2 => get_string('gallerymode_postfirst', 'mod_dialoguebuilder'),
-            3 => get_string('gallerymode_afterclose', 'mod_dialoguebuilder')
+            3 => get_string('gallerymode_afterclose', 'mod_dialoguebuilder'),
         ];
         $mform->addElement('select', 'gallerymode', get_string('gallerymode', 'mod_dialoguebuilder'), $galleryoptions);
         $mform->addHelpButton('gallerymode', 'gallerymode', 'mod_dialoguebuilder');
