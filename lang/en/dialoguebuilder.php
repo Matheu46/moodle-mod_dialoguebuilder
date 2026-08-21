@@ -56,6 +56,7 @@ $string['characters'] = 'Characters';
 $string['grade'] = 'Grade';
 $string['gradesaved'] = 'Grade saved successfully';
 $string['feedback'] = 'Feedback';
+$string['viewgallery'] = 'View Gallery';
 $string['gallerysettings'] = 'Gallery settings';
 $string['gallerymode'] = 'Gallery access mode';
 $string['gallerymode_help'] = 'Determines when and if students can view other students\' submitted dialogues.';
