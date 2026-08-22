@@ -278,6 +278,8 @@ define(['core/str', 'core/emoji/picker', 'core/notification'], function(str, Emo
                  * Renders the lines list.
                  */
                 function renderLines() {
+                    var currentScroll = linesContainer.scrollTop;
+
                     var lineItems = linesContainer.querySelectorAll('.mod-dialoguebuilder__line-item');
                     lineItems.forEach(function(item) {
                         item.remove();
@@ -375,6 +377,8 @@ define(['core/str', 'core/emoji/picker', 'core/notification'], function(str, Emo
                         row.appendChild(colDel);
                         linesContainer.appendChild(row);
                     });
+
+                    linesContainer.scrollTop = currentScroll;
                 }
 
                 document.getElementById('mod-dialoguebuilder__add-char-btn').addEventListener('click', function(e) {
