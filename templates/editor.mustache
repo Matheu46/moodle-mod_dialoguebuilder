@@ -71,18 +71,18 @@
                 </div>
                 <div class="card-footer" id="mod-dialoguebuilder__new-line-container" style="display: none;">
                     <div class="row align-items-start">
-                        <div class="col-md-3">
+                        <div class="col-10 col-md-3 mb-2 mb-md-0">
                             <select id="mod-dialoguebuilder__new-line-char" class="form-control form-control-sm"></select>
                         </div>
-                        <div class="col-md-8 position-relative">
+                        <div class="col-2 col-md-1 order-md-3 mb-2 mb-md-0 text-end">
+                            <button type="button" id="mod-dialoguebuilder__add-line-btn" class="btn btn-sm btn-primary w-100 h-100 d-flex align-items-center justify-content-center" title="{{#str}} addline, mod_dialoguebuilder {{/str}}">
+                                <i class="fa fa-plus"></i>
+                            </button>
+                        </div>
+                        <div class="col-12 col-md-8 order-md-2 position-relative">
                             <textarea id="mod-dialoguebuilder__new-line-text" class="form-control pe-5" rows="2" placeholder="{{#str}} writelineplaceholder, mod_dialoguebuilder {{/str}}"></textarea>
                             <button type="button" id="mod-dialoguebuilder__new-line-emoji-btn" class="btn btn-link btn-sm position-absolute emoji-toggle-btn text-decoration-none" style="bottom: 5px; right: 20px;">
                                 <i class="fa fa-smile-o" style="font-size: 1.2rem; color: #6c757d;"></i>
-                            </button>
-                        </div>
-                        <div class="col-md-1">
-                            <button type="button" id="mod-dialoguebuilder__add-line-btn" class="btn btn-sm btn-primary w-100 h-100 d-flex align-items-center justify-content-center" title="{{#str}} addline, mod_dialoguebuilder {{/str}}">
-                                <i class="fa fa-plus"></i>
                             </button>
                         </div>
                     </div>

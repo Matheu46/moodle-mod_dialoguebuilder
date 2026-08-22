@@ -293,10 +293,10 @@ define(['core/str', 'core/emoji/picker', 'core/notification'], function(str, Emo
 
                     lines.forEach(function(line, index) {
                         var row = document.createElement('div');
-                        row.className = 'mod-dialoguebuilder__line-item row mb-2 align-items-start';
+                        row.className = 'mod-dialoguebuilder__line-item row mb-3 align-items-start';
 
                         var colSelect = document.createElement('div');
-                        colSelect.className = 'col-md-3';
+                        colSelect.className = 'col-10 col-md-3 mb-2 mb-md-0';
                         var select = document.createElement('select');
                         select.className = 'form-control form-control-sm char-select';
 
@@ -315,8 +315,20 @@ define(['core/str', 'core/emoji/picker', 'core/notification'], function(str, Emo
                         });
                         colSelect.appendChild(select);
 
+                        var colDel = document.createElement('div');
+                        colDel.className = 'col-2 col-md-1 order-md-3 mb-2 mb-md-0 text-end';
+                        var delBtn = document.createElement('button');
+                        delBtn.type = 'button';
+                        delBtn.className = 'btn btn-sm btn-outline-danger w-100 h-100';
+                        delBtn.innerHTML = '<i class="fa fa-times"></i>';
+                        delBtn.addEventListener('click', function() {
+                            lines.splice(index, 1);
+                            renderLines();
+                        });
+                        colDel.appendChild(delBtn);
+
                         var colText = document.createElement('div');
-                        colText.className = 'col-md-8 position-relative';
+                        colText.className = 'col-12 col-md-8 order-md-2 position-relative';
 
                         var textarea = document.createElement('textarea');
                         textarea.className = 'form-control pe-5'; // Add padding to avoid text overlapping the button
@@ -360,21 +372,9 @@ define(['core/str', 'core/emoji/picker', 'core/notification'], function(str, Emo
                         colText.appendChild(textarea);
                         colText.appendChild(toggleBtn);
 
-                        var colDel = document.createElement('div');
-                        colDel.className = 'col-md-1';
-                        var delBtn = document.createElement('button');
-                        delBtn.type = 'button';
-                        delBtn.className = 'btn btn-sm btn-outline-danger w-100';
-                        delBtn.innerHTML = '<i class="fa fa-times"></i>';
-                        delBtn.addEventListener('click', function() {
-                            lines.splice(index, 1);
-                            renderLines();
-                        });
-                        colDel.appendChild(delBtn);
-
                         row.appendChild(colSelect);
-                        row.appendChild(colText);
                         row.appendChild(colDel);
+                        row.appendChild(colText);
                         linesContainer.appendChild(row);
                     });
 
