@@ -350,6 +350,11 @@ define(['core/str', 'core/emoji/picker'], function(str, EmojiPicker) {
                             text: ''
                         });
                         renderLines();
+
+                        // Scroll to bottom to show the new line
+                        setTimeout(function() {
+                            linesContainer.scrollTop = linesContainer.scrollHeight;
+                        }, 10);
                     }
                 });
 
