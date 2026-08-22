@@ -65,14 +65,14 @@ define(['mod_dialoguebuilder/html2canvas', 'core/notification'], function(html2c
                     clone.style.left = '-9999px';
                     clone.style.top = '0';
                     clone.style.width = target.offsetWidth + 'px';
-                    clone.style.height = 'auto'; // allow expanding
+                    clone.style.height = 'auto'; // Allow expanding.
                     clone.style.overflow = 'visible';
                     clone.style.maxHeight = 'none';
 
                     // Force static mode so animation opacity doesn't cause a washed out look
                     clone.classList.add('mod-dialoguebuilder__static');
 
-                    // html2canvas struggles with object-fit: cover on images, causing them to squish.
+                    // Html2canvas struggles with object-fit: cover on images, causing them to squish.
                     // Convert img avatars to divs with background-image on the clone.
                     var avatars = clone.querySelectorAll('img.mod-dialoguebuilder__avatar');
                     avatars.forEach(function(img) {
@@ -97,13 +97,14 @@ define(['mod_dialoguebuilder/html2canvas', 'core/notification'], function(html2c
 
                     // Execute html2canvas
                     html2canvas(clone, {
-                        backgroundColor: '#f8f9fa', // ensure background is solid
-                        scale: 2 // better quality
+                        backgroundColor: '#f8f9fa', // Ensure background is solid.
+                        scale: 2 // Better quality.
                     }).then(function(canvas) {
                         var link = document.createElement('a');
                         link.download = 'dialogue.png';
                         link.href = canvas.toDataURL('image/png');
                         link.click();
+                        return true;
                     }).catch(notification.exception).finally(function() {
                         // Restore button and remove clone
                         icon.className = oldClass;

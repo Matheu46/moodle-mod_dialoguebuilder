@@ -71,7 +71,7 @@ class restore_dialoguebuilder_activity_task extends restore_activity_task {
 
     /**
      * Define the restore log rules that will be applied by the
-     * {@link restore_logs_processor} when restoring dialoguebuilder logs.
+     * {@see restore_logs_processor} when restoring dialoguebuilder logs.
      *
      * @return restore_log_rule[]
      */

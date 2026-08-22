@@ -5,10 +5,10 @@
  * @copyright  2026 Matheus Mathias
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['core/str', 'core/emoji/picker', 'core/notification'], function(str, EmojiPicker, Notification) {
+define(['core/str', 'core/emoji/picker', 'core/notification'], function(str, emojiPicker, Notification) {
 
-    if (EmojiPicker && EmojiPicker.default) {
-        EmojiPicker = EmojiPicker.default;
+    if (emojiPicker && emojiPicker.default) {
+        emojiPicker = emojiPicker.default;
     }
 
     return {
@@ -79,7 +79,7 @@ define(['core/str', 'core/emoji/picker', 'core/notification'], function(str, Emo
                 var emojiPickerContainer = document.getElementById('mod-dialoguebuilder__emoji-picker-container');
 
                 if (emojiPickerContainer) {
-                    EmojiPicker(emojiPickerContainer, function(emoji) {
+                    emojiPicker(emojiPickerContainer, function(emoji) {
                         if (activeTextarea) {
                             var startPos = activeTextarea.selectionStart;
                             var endPos = activeTextarea.selectionEnd;
@@ -117,7 +117,7 @@ define(['core/str', 'core/emoji/picker', 'core/notification'], function(str, Emo
                             var wrapperRect = wrapper.getBoundingClientRect();
 
                             emojiPickerContainer.style.top = (btnRect.bottom - wrapperRect.top + 5) + 'px';
-                            var leftPos = btnRect.right - wrapperRect.left - 350; // default to right align
+                            var leftPos = btnRect.right - wrapperRect.left - 350; // Default to right align.
                             if (leftPos < 0) {
                                 leftPos = 15;
                             }
@@ -203,7 +203,7 @@ define(['core/str', 'core/emoji/picker', 'core/notification'], function(str, Emo
 
                         var updateName = function(e) {
                             c.name = e.target.value;
-                            updateSelects(); // update names in selects without re-rendering everything
+                            updateSelects(); // Update names in selects without re-rendering everything.
                         };
                         input.addEventListener('change', updateName);
                         input.addEventListener('keyup', updateName);
@@ -361,7 +361,7 @@ define(['core/str', 'core/emoji/picker', 'core/notification'], function(str, Emo
                                 var wrapperRect = wrapper.getBoundingClientRect();
 
                                 emojiPickerContainer.style.top = (btnRect.bottom - wrapperRect.top + 5) + 'px';
-                                var leftPos = btnRect.right - wrapperRect.left - 350; // default to right align
+                                var leftPos = btnRect.right - wrapperRect.left - 350; // Default to right align.
                                 if (leftPos < 0) {
                                     leftPos = 15;
                                 }
@@ -471,6 +471,8 @@ define(['core/str', 'core/emoji/picker', 'core/notification'], function(str, Emo
                 // Initial render.
                 renderCharacters();
                 renderLines();
+
+                return true;
 
             }).catch(function(e) {
                 // eslint-disable-next-line no-console

@@ -40,16 +40,16 @@ define([], function() {
                 var el = messages[index];
 
                 el.classList.add('mod-dialoguebuilder__typing');
-                container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
+                container.scrollTo({top: container.scrollHeight, behavior: 'smooth'});
 
                 currentTimeout = setTimeout(function() {
                     if (!isPlaying) {
-                        return; // check again in case paused during typing
+                        return; // Check again in case paused during typing.
                     }
 
                     el.classList.remove('mod-dialoguebuilder__typing');
                     el.classList.add('mod-dialoguebuilder__show');
-                    container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
+                    container.scrollTo({top: container.scrollHeight, behavior: 'smooth'});
 
                     index++;
 
@@ -87,7 +87,7 @@ define([], function() {
                     msg.classList.remove('mod-dialoguebuilder__typing', 'mod-dialoguebuilder__show');
                 });
                 index = 0;
-                container.scrollTo({ top: 0, behavior: 'smooth' });
+                container.scrollTo({top: 0, behavior: 'smooth'});
 
                 setTimeout(function() {
                     container.dispatchEvent(new CustomEvent('dialogue:play'));
