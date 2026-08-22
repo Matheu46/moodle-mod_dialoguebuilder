@@ -5,7 +5,7 @@
  * @copyright  2026 Matheus Mathias
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['core/str', 'core/emoji/picker'], function(str, EmojiPicker) {
+define(['core/str', 'core/emoji/picker', 'core/notification'], function(str, EmojiPicker, Notification) {
 
     if (EmojiPicker && EmojiPicker.default) {
         EmojiPicker = EmojiPicker.default;
@@ -26,14 +26,16 @@ define(['core/str', 'core/emoji/picker'], function(str, EmojiPicker) {
                 {key: 'characternameplaceholder', component: 'mod_dialoguebuilder'},
                 {key: 'unnamed', component: 'mod_dialoguebuilder'},
                 {key: 'writelineplaceholder', component: 'mod_dialoguebuilder'},
-                {key: 'character', component: 'mod_dialoguebuilder'}
+                {key: 'character', component: 'mod_dialoguebuilder'},
+                {key: 'emptyfieldwarning', component: 'mod_dialoguebuilder'}
             ]).then(function(strings) {
                 var langStrings = {
                     changeavatar: strings[0],
                     characternameplaceholder: strings[1],
                     unnamed: strings[2],
                     writelineplaceholder: strings[3],
-                    character: strings[4]
+                    character: strings[4],
+                    emptyfieldwarning: strings[5]
                 };
 
                 var characters = [];
@@ -80,8 +82,8 @@ define(['core/str', 'core/emoji/picker'], function(str, EmojiPicker) {
                             activeTextarea.value = text.substring(0, startPos) + emoji + text.substring(endPos);
 
                             activeTextarea.focus();
-                            // Trigger change to update state
-                            activeTextarea.dispatchEvent(new Event('change'));
+                            // Trigger input to update state
+                            activeTextarea.dispatchEvent(new Event('input'));
                         }
                         emojiPickerContainer.classList.add('d-none');
                     });
@@ -279,8 +281,11 @@ define(['core/str', 'core/emoji/picker'], function(str, EmojiPicker) {
                         textarea.rows = 2;
                         textarea.placeholder = langStrings.writelineplaceholder;
                         textarea.value = line.text || '';
-                        textarea.addEventListener('change', function(e) {
+                        textarea.addEventListener('input', function(e) {
                             line.text = e.target.value;
+                            if (e.target.value.trim() !== '') {
+                                e.target.classList.remove('is-invalid');
+                            }
                         });
 
                         var toggleBtn = document.createElement('button');
@@ -358,7 +363,28 @@ define(['core/str', 'core/emoji/picker'], function(str, EmojiPicker) {
                     }
                 });
 
-                submitForm.addEventListener('submit', function() {
+                submitForm.addEventListener('submit', function(e) {
+                    var hasEmptyLines = false;
+                    var textareas = linesContainer.querySelectorAll('textarea');
+
+                    textareas.forEach(function(textarea) {
+                        if (textarea.value.trim() === '') {
+                            hasEmptyLines = true;
+                            textarea.classList.add('is-invalid');
+                        } else {
+                            textarea.classList.remove('is-invalid');
+                        }
+                    });
+
+                    if (hasEmptyLines) {
+                        e.preventDefault(); // Stop submission
+                        Notification.addNotification({
+                            message: langStrings.emptyfieldwarning,
+                            type: 'error'
+                        });
+                        return;
+                    }
+
                     var payload = {
                         characters: characters,
                         lines: lines

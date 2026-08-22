@@ -70,6 +70,7 @@ $string['submissionsclosed'] = 'Submissions for this activity closed on {$a}.';
 $string['addcharacter'] = 'Add character';
 $string['dialoguescript'] = 'Dialogue script';
 $string['addline'] = 'Add line';
+$string['emptyfieldwarning'] = 'There are empty fields in your script. Please fill them out before saving.';
 $string['emptylinesmsg'] = 'Add characters first to be able to create lines for the script.';
 $string['savescript'] = 'Save script';
 $string['savedraft'] = 'Save draft';
