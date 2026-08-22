@@ -70,6 +70,11 @@ define(['core/str', 'core/emoji/picker', 'core/notification'], function(str, Emo
                 var submitForm = document.getElementById('mod-dialoguebuilder__submit-form');
                 var dataInput = document.getElementById('mod-dialoguebuilder__dialoguedata');
 
+                var newLineContainer = document.getElementById('mod-dialoguebuilder__new-line-container');
+                var newLineChar = document.getElementById('mod-dialoguebuilder__new-line-char');
+                var newLineText = document.getElementById('mod-dialoguebuilder__new-line-text');
+                var newLineEmojiBtn = document.getElementById('mod-dialoguebuilder__new-line-emoji-btn');
+
                 var activeTextarea = null;
                 var emojiPickerContainer = document.getElementById('mod-dialoguebuilder__emoji-picker-container');
 
@@ -94,6 +99,29 @@ define(['core/str', 'core/emoji/picker', 'core/notification'], function(str, Emo
                             if (!emojiPickerContainer.contains(e.target) && !e.target.closest('.emoji-toggle-btn')) {
                                 emojiPickerContainer.classList.add('d-none');
                             }
+                        }
+                    });
+                }
+
+                if (newLineEmojiBtn) {
+                    newLineEmojiBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        if (activeTextarea === newLineText && !emojiPickerContainer.classList.contains('d-none')) {
+                            emojiPickerContainer.classList.add('d-none');
+                        } else {
+                            activeTextarea = newLineText;
+                            emojiPickerContainer.classList.remove('d-none');
+
+                            var wrapper = document.getElementById('mod-dialoguebuilder__editor-' + cmid);
+                            var btnRect = newLineEmojiBtn.getBoundingClientRect();
+                            var wrapperRect = wrapper.getBoundingClientRect();
+
+                            emojiPickerContainer.style.top = (btnRect.bottom - wrapperRect.top + 5) + 'px';
+                            var leftPos = btnRect.right - wrapperRect.left - 350; // default to right align
+                            if (leftPos < 0) {
+                                leftPos = 15;
+                            }
+                            emojiPickerContainer.style.left = leftPos + 'px';
                         }
                     });
                 }
@@ -187,10 +215,10 @@ define(['core/str', 'core/emoji/picker', 'core/notification'], function(str, Emo
                         delBtn.addEventListener('click', function() {
                             // Remove character and their lines
                             characters = characters.filter(function(char) {
-                                return char.id !== c.id;
+                                return char.id != c.id;
                             });
                             lines = lines.filter(function(l) {
-                                return l.characterid !== c.id;
+                                return l.characterid != c.id;
                             });
                             renderCharacters();
                             renderLines();
@@ -204,14 +232,20 @@ define(['core/str', 'core/emoji/picker', 'core/notification'], function(str, Emo
                     });
 
                     if (characters.length > 0) {
-                        addLineBtn.disabled = false;
+                        if (newLineContainer) {
+                            newLineContainer.style.display = '';
+                        }
                         if (lines.length === 0) {
                             emptyMsg.style.display = '';
                         }
                     } else {
-                        addLineBtn.disabled = true;
+                        if (newLineContainer) {
+                            newLineContainer.style.display = 'none';
+                        }
                         emptyMsg.style.display = '';
                     }
+
+                    updateSelects();
                 }
 
                 /**
@@ -219,19 +253,25 @@ define(['core/str', 'core/emoji/picker', 'core/notification'], function(str, Emo
                  */
                 function updateSelects() {
                     var selects = linesContainer.querySelectorAll('select.char-select');
-                    selects.forEach(function(select) {
+
+                    var updateSelect = function(select) {
                         var selectedVal = parseInt(select.value, 10);
                         select.innerHTML = '';
                         characters.forEach(function(c) {
                             var opt = document.createElement('option');
                             opt.value = c.id;
                             opt.textContent = c.name || langStrings.unnamed;
-                            if (c.id === selectedVal) {
+                            if (c.id == selectedVal) {
                                 opt.selected = true;
                             }
                             select.appendChild(opt);
                         });
-                    });
+                    };
+
+                    selects.forEach(updateSelect);
+                    if (newLineChar) {
+                        updateSelect(newLineChar);
+                    }
                 }
 
                 /**
@@ -262,7 +302,7 @@ define(['core/str', 'core/emoji/picker', 'core/notification'], function(str, Emo
                             var opt = document.createElement('option');
                             opt.value = c.id;
                             opt.textContent = c.name || langStrings.unnamed;
-                            if (c.id === line.characterid) {
+                            if (c.id == line.characterid) {
                                 opt.selected = true;
                             }
                             select.appendChild(opt);
@@ -347,21 +387,53 @@ define(['core/str', 'core/emoji/picker', 'core/notification'], function(str, Emo
                     renderLines();
                 });
 
-                document.getElementById('mod-dialoguebuilder__add-line-btn').addEventListener('click', function(e) {
-                    e.preventDefault();
-                    if (characters.length > 0) {
-                        lines.push({
-                            characterid: characters[0].id,
-                            text: ''
-                        });
-                        renderLines();
+                if (addLineBtn && newLineText && newLineChar) {
+                    addLineBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        if (characters.length > 0) {
+                            var text = newLineText.value.trim();
+                            var charId = parseInt(newLineChar.value, 10);
 
-                        // Scroll to bottom to show the new line
-                        setTimeout(function() {
-                            linesContainer.scrollTop = linesContainer.scrollHeight;
-                        }, 10);
-                    }
-                });
+                            if (!charId) {
+                                charId = characters[0].id;
+                            }
+
+                            if (text === '') {
+                                newLineText.classList.add('is-invalid');
+                                return;
+                            }
+
+                            newLineText.classList.remove('is-invalid');
+
+                            lines.push({
+                                characterid: charId,
+                                text: text
+                            });
+
+                            newLineText.value = '';
+
+                            renderLines();
+
+                            // Scroll to bottom to show the new line
+                            setTimeout(function() {
+                                linesContainer.scrollTop = linesContainer.scrollHeight;
+                            }, 10);
+                        }
+                    });
+
+                    newLineText.addEventListener('keydown', function(e) {
+                        if (e.key === 'Enter' && !e.shiftKey) {
+                            e.preventDefault();
+                            addLineBtn.click();
+                        }
+                    });
+
+                    newLineText.addEventListener('input', function(e) {
+                        if (e.target.value.trim() !== '') {
+                            e.target.classList.remove('is-invalid');
+                        }
+                    });
+                }
 
                 submitForm.addEventListener('submit', function(e) {
                     var hasEmptyLines = false;
