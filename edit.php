@@ -51,7 +51,7 @@ if ($dialoguebuilder->timeclose > 0 && $now > $dialoguebuilder->timeclose) {
 }
 
 // Process form submission.
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($action === 'save_draft' || $action === 'submit')) {
+if (data_submitted() && ($action === 'save_draft' || $action === 'submit')) {
     require_sesskey();
 
     $dialoguedataraw = required_param('dialoguedata', PARAM_RAW);
