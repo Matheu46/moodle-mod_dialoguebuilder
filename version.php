@@ -29,4 +29,4 @@ $plugin->requires  = 2024100100;        // Requires this Moodle version (Moodle 
 $plugin->component = 'mod_dialoguebuilder'; // Full name of the plugin (used for diagnostics).
 $plugin->cron      = 0;
 $plugin->maturity  = MATURITY_ALPHA;
-$plugin->release   = 'v0.1-alpha';
+$plugin->release   = '0.1.0';

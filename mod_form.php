@@ -83,4 +83,21 @@ class mod_dialoguebuilder_mod_form extends moodleform_mod {
         // Add standard action buttons.
         $this->add_action_buttons();
     }
+
+    /**
+     * Validates form data.
+     *
+     * @param array $data
+     * @param array $files
+     * @return array
+     */
+    public function validation($data, $files) {
+        $errors = parent::validation($data, $files);
+
+        if ($data['timeopen'] > 0 && $data['timeclose'] > 0 && $data['timeopen'] >= $data['timeclose']) {
+            $errors['timeclose'] = get_string('timeclosebeforeopen', 'mod_dialoguebuilder');
+        }
+
+        return $errors;
+    }
 }

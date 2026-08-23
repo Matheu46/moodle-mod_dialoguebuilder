@@ -106,6 +106,7 @@ $string['submitted'] = 'Submitted';
 $string['tasksubmitted'] = 'Your task has been successfully submitted!';
 $string['teachersummary'] = 'Teacher summary: {$a} students have submitted dialogues so far.';
 $string['timeclose'] = 'Due date';
+$string['timeclosebeforeopen'] = 'The due date must be after the allow submissions from date.';
 $string['timecreated'] = 'Time created';
 $string['timemodified'] = 'Last modified';
 $string['timeopen'] = 'Allow submissions from';
