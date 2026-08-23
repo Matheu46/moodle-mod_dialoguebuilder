@@ -51,8 +51,7 @@ $PAGE->set_context($context);
 echo $OUTPUT->header();
 
 // Capability-based display: Teacher vs Student.
-// Using 'moodle/course:manageactivities' as a proxy for teacher capability until custom roles are fully defined.
-if (has_capability('moodle/course:manageactivities', $context)) {
+if (has_capability('mod/dialoguebuilder:grade', $context)) {
     // Teacher view: Grading summary.
     require_once($CFG->dirroot . '/lib/enrollib.php');
 
@@ -218,7 +217,7 @@ if (has_capability('moodle/course:manageactivities', $context)) {
 
 // Gallery button logic.
 $showgallery = false;
-$isteacher = has_capability('moodle/course:manageactivities', $context);
+$isteacher = has_capability('mod/dialoguebuilder:grade', $context);
 if (isset($dialoguebuilder->gallerymode) && $dialoguebuilder->gallerymode > 0) {
     if ($isteacher) {
         $showgallery = true;

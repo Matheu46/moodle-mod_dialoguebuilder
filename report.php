@@ -37,7 +37,7 @@ require_login($course, true, $cm);
 $context = context_module::instance($cm->id);
 
 // Teacher capability check.
-require_capability('moodle/course:manageactivities', $context); // Use viewall capability in the future if we add it.
+require_capability('mod/dialoguebuilder:grade', $context);
 
 $PAGE->set_url(new moodle_url('/mod/dialoguebuilder/report.php', ['id' => $cm->id]));
 $PAGE->set_context($context);

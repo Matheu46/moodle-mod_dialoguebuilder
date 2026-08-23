@@ -52,7 +52,7 @@ $PAGE->set_heading(fullname($user));
 
 // Gallery visibility checks.
 $canview = false;
-$isteacher = has_capability('moodle/course:manageactivities', $context);
+$isteacher = has_capability('mod/dialoguebuilder:grade', $context);
 if ($isteacher) {
     $canview = true;
 } else if (isset($dialoguebuilder->gallerymode) && $dialoguebuilder->gallerymode > 0) {

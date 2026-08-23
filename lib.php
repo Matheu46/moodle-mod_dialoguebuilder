@@ -278,7 +278,7 @@ function dialoguebuilder_pluginfile($course, $cm, $context, $filearea, $args, $f
 function dialoguebuilder_extend_settings_navigation(settings_navigation $settingsnav, navigation_node $dialoguebuildernode = null) {
     global $PAGE;
 
-    if (!has_capability('moodle/course:manageactivities', $PAGE->cm->context)) {
+    if (!has_capability('mod/dialoguebuilder:grade', $PAGE->cm->context)) {
         return;
     }
 
