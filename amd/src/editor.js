@@ -190,7 +190,6 @@ define(['core/str', 'core/emoji/picker', 'core/notification'], function(str, emo
 
                         var avatarInput = document.createElement('input');
                         avatarInput.type = 'file';
-                        avatarInput.name = 'avatars[' + c.id + ']';
                         avatarInput.accept = 'image/*';
                         avatarInput.className = 'd-none';
 

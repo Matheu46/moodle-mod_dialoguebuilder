@@ -254,13 +254,15 @@ function dialoguebuilder_pluginfile($course, $cm, $context, $filearea, $args, $f
         }
 
         $fs = get_file_storage();
-        $relativepath = implode('/', $args);
-        $fullpath = "/{$context->id}/mod_dialoguebuilder/avatar/{$itemid}/{$relativepath}";
 
-        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) || $file->is_directory()) {
+        // Since each character (itemid) has exactly one avatar file, we can just fetch it directly.
+        $files = $fs->get_area_files($context->id, 'mod_dialoguebuilder', 'avatar', $itemid, 'id DESC', false);
+
+        if (empty($files)) {
             return false;
         }
 
+        $file = reset($files);
         send_stored_file($file, 0, 0, $forcedownload, $options);
     }
 

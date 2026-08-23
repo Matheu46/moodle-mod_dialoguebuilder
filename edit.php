@@ -118,28 +118,29 @@ if (data_submitted() && ($action === 'save_draft' || $action === 'submit')) {
                 $charmap[$char->id] = $charid;
                 $submittedcharids[] = $charid;
 
-                // Handle avatar upload if present.
+                // Handle avatar upload via base64 data URL if present.
                 if (
-                    isset($_FILES['avatars']) &&
-                    isset($_FILES['avatars']['tmp_name'][$char->id]) &&
-                    $_FILES['avatars']['error'][$char->id] === UPLOAD_ERR_OK
+                    !empty($char->avatarDataUrl) &&
+                    preg_match('/^data:image\/([a-zA-Z0-9]+).*?;base64,/', $char->avatarDataUrl, $type)
                 ) {
-                    $tmpname = $_FILES['avatars']['tmp_name'][$char->id];
-                    $filesize = filesize($tmpname);
+                    $b64string = substr($char->avatarDataUrl, strpos($char->avatarDataUrl, ',') + 1);
+                    $b64string = str_replace(' ', '+', $b64string);
+                    $data = base64_decode($b64string);
 
-                    if ($filesize <= $maxbytes) {
-                        $fileinfo = [
-                            'contextid' => $context->id,
-                            'component' => 'mod_dialoguebuilder',
-                            'filearea' => 'avatar',
-                            'itemid' => $charid,
-                            'filepath' => '/',
-                            'filename' => 'avatar.png', // Or extract original extension.
-                        ];
-                        // Delete old avatar if exists.
-                        $fs->delete_area_files($context->id, 'mod_dialoguebuilder', 'avatar', $charid);
-                        // Save new avatar.
-                        $fs->create_file_from_pathname($fileinfo, $tmpname);
+                    if ($data !== false && strlen($data) <= $maxbytes) {
+                        $extension = strtolower($type[1]);
+                        if (in_array($extension, ['png', 'jpeg', 'jpg', 'gif', 'webp'])) {
+                            $fileinfo = [
+                                'contextid' => $context->id,
+                                'component' => 'mod_dialoguebuilder',
+                                'filearea' => 'avatar',
+                                'itemid' => $charid,
+                                'filepath' => '/',
+                                'filename' => 'avatar.' . $extension,
+                            ];
+                            $fs->delete_area_files($context->id, 'mod_dialoguebuilder', 'avatar', $charid);
+                            $fs->create_file_from_string($fileinfo, $data);
+                        }
                     }
                 }
             }
