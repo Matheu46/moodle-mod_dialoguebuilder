@@ -1,4 +1,13 @@
-/* eslint-disable */
+/*
+ * Moodle readme:
+ * To update this library:
+ * 1. Download the latest version of html2canvas from https://html2canvas.hertzen.com/
+ * 2. Copy the html2canvas.js (unminified) file directly into this file (mod_dialoguebuilder/amd/src/html2canvas.js).
+ * 3. Keep this Moodle readme comment at the top of the file.
+ * 4. Run 'grunt amd' to generate the minified version.
+ * 
+ * No modifications were made to the original code.
+ */
 /*!
  * html2canvas 1.4.1 <https://html2canvas.hertzen.com>
  * Copyright (c) 2022 Niklas von Hertzen <https://hertzen.com>
