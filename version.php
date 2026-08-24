@@ -27,6 +27,5 @@ defined('MOODLE_INTERNAL') || die();
 $plugin->version   = 2026082000;        // The current module version (Date: YYYYMMDDXX).
 $plugin->requires  = 2024100100;        // Requires this Moodle version (Moodle 4.5 approx release date).
 $plugin->component = 'mod_dialoguebuilder'; // Full name of the plugin (used for diagnostics).
-$plugin->cron      = 0;
 $plugin->maturity  = MATURITY_ALPHA;
 $plugin->release   = '0.1.0';
