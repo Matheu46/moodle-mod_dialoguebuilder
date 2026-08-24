@@ -223,7 +223,7 @@ if (isset($dialoguebuilder->gallerymode) && $dialoguebuilder->gallerymode > 0) {
         $showgallery = true;
     } else {
         $now = time();
-        $hassubmitted = (isset($submission) && $submission->status === 'submitted');
+        $hassubmitted = (!empty($submission) && $submission->status === 'submitted');
 
         if ($dialoguebuilder->gallerymode == 1) { // Free.
             $showgallery = true;
