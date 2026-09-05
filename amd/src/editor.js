@@ -416,9 +416,10 @@ define(['core/str', 'core/emoji/picker', 'core/notification'], function(str, emo
 
                 document.getElementById('mod-dialoguebuilder__add-char-btn').addEventListener('click', function(e) {
                     e.preventDefault();
+                    var newId = charIdCounter++;
                     characters.push({
-                        id: charIdCounter++,
-                        name: langStrings.character + ' ' + charIdCounter
+                        id: newId,
+                        name: langStrings.character + ' ' + newId
                     });
                     renderCharacters();
                     renderLines();
