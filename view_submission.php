@@ -147,7 +147,12 @@ if (empty($lines)) {
         ];
         $lastcharid = $line->characterid;
     }
-    echo $OUTPUT->render_from_template('mod_dialoguebuilder/chat_view', $templatedata);
+    $templatedata['cmid'] = $cm->id;
+    $templatedata['subid'] = $subid;
+    $templatedata['characters'] = array_values($charmap);
+    $theme = optional_param('chattheme', 'modern', PARAM_ALPHA);
+    $templatename = ($theme === 'msn') ? 'mod_dialoguebuilder/chat_view_msn' : 'mod_dialoguebuilder/chat_view';
+    echo $OUTPUT->render_from_template($templatename, $templatedata);
     echo $OUTPUT->render_from_template('mod_dialoguebuilder/player', ['chatid' => $templatedata['chatid'], 'is_static' => false]);
 }
 

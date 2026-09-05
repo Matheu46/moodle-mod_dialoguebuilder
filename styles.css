@@ -188,3 +188,74 @@
     display: flex;
     animation: none;
 }
+
+/* MSN Theme */
+.mod-dialoguebuilder__chat-container.theme-msn {
+    background-color: #f0f0f0; /* Light grey/white typical of MSN */
+    border: 3px solid #6486c4; /* Classic MSN Blue border */
+    border-radius: 6px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    font-family: 'Tahoma', 'Arial', sans-serif;
+    /* Optional: a slight gradient at the top if we had a header, but we'll leave it simple */
+}
+
+/* Make all messages align to the left in MSN theme */
+.mod-dialoguebuilder__chat-container.theme-msn .mod-dialoguebuilder__chat-message {
+    align-self: flex-start;
+    width: 100%;
+    max-width: 100%;
+}
+
+.mod-dialoguebuilder__chat-container.theme-msn .mod-dialoguebuilder__chat-bubble {
+    background-color: transparent !important;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0 8px;
+}
+
+.mod-dialoguebuilder__chat-container.theme-msn .mod-dialoguebuilder__chat-author {
+    color: #4b6b9e !important; /* MSN dark blue */
+    font-weight: bold;
+    text-align: left !important;
+    font-size: 14px;
+    display: inline-block;
+}
+.mod-dialoguebuilder__chat-container.theme-msn .mod-dialoguebuilder__chat-author::after {
+    content: " diz:";
+    color: #4b6b9e;
+    font-weight: normal;
+}
+
+.mod-dialoguebuilder__chat-container.theme-msn .mod-dialoguebuilder__chat-text {
+    color: #000;
+    font-family: 'Comic Sans MS', 'Tahoma', sans-serif; /* A bit of MSN flair */
+}
+
+/* Avatar styling */
+.mod-dialoguebuilder__chat-container.theme-msn .mod-dialoguebuilder__avatar {
+    border-radius: 4px; /* Square with slight rounding */
+    border: 1px solid #aeb2b8;
+    padding: 2px;
+    background: #fff;
+    width: 50px;
+    height: 50px;
+    order: 0 !important; /* Force to the left */
+    margin-left: 0 !important;
+    margin-right: 10px !important;
+}
+
+/* Hide same-as-prev avatars correctly in MSN */
+.mod-dialoguebuilder__chat-container.theme-msn .mod-dialoguebuilder__chat-message.mod-dialoguebuilder__same-as-prev .mod-dialoguebuilder__avatar {
+    opacity: 0; /* Keep space but invisible */
+    height: 50px;
+}
+
+/* Nudge Animation (Chamar a atenção) - optional extra class */
+@keyframes msn-nudge {
+    0%, 100% { transform: translate(0, 0); }
+    10%, 30%, 50%, 70%, 90% { transform: translate(-5px, 0); }
+    20%, 40%, 60%, 80% { transform: translate(5px, 0); }
+}
+.mod-dialoguebuilder__chat-container.theme-msn.nudge-active {
+    animation: msn-nudge 0.4s;
+}

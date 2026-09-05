@@ -1,0 +1,48 @@
+{{!
+    Chat template for MSN Theme.
+    Expects: chatid, lines, characters
+}}
+
+<div class="text-right mb-2" style="text-align: right; max-width: 700px; margin: 0 auto;">
+    <a href="?id={{cmid}}&chattheme=modern{{#subid}}&subid={{subid}}{{/subid}}" class="btn btn-sm btn-outline-secondary">
+        <i class="fa fa-paint-brush"></i> Alternar para Moderno
+    </a>
+</div>
+
+<div class="msn-wrapper" style="max-width: 700px; margin: 0 auto; display: flex; background: linear-gradient(to bottom, #dbebfc 0%, #c4e1ff 100%); border: 1px solid #82a8ce; border-radius: 8px; font-family: Tahoma, sans-serif; padding: 10px; gap: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.15);">
+    <!-- SIDEBAR -->
+    <div class="msn-sidebar" style="width: 100px; display: flex; flex-direction: column; gap: 20px; justify-content: space-between;">
+        {{#characters}}
+        <div class="msn-avatar-box" style="text-align: center;">
+            <div style="padding: 4px; border: 2px solid #7dc242; background: linear-gradient(to bottom, #ffffff, #d3efc2); border-radius: 8px; display: inline-block; box-shadow: 1px 1px 3px rgba(0,0,0,0.2);">
+                <img src="{{avatarurl}}" alt="{{name}}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 4px; border: 1px solid #aeb2b8;">
+            </div>
+            <div style="font-size: 11px; color: #333; margin-top: 5px; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{name}}</div>
+        </div>
+        {{/characters}}
+    </div>
+
+    <!-- CHAT AREA -->
+    <div class="msn-chat-area mod-dialoguebuilder__chat-container {{#is_static}}mod-dialoguebuilder__static{{/is_static}}" id="{{chatid}}" style="flex: 1; display: flex; flex-direction: column; background: #fff; padding: 10px; overflow-y: auto; border: 1px solid #99b4d1; border-radius: 4px;">
+        {{#lines}}
+        <div class="mod-dialoguebuilder__chat-message" style="margin-bottom: 8px;">
+            <div class="mod-dialoguebuilder__chat-typing" style="font-size: 12px; color: #888;">
+                {{charname}} está digitando...
+            </div>
+            <div class="mod-dialoguebuilder__chat-text" style="font-size: 13px;">
+                <span style="color: #4b6b9e; font-weight: bold;">{{charname}} diz:</span><br>
+                <span style="color: #000; font-family: 'Comic Sans MS', Tahoma, sans-serif;">{{{text}}}</span>
+            </div>
+        </div>
+        {{/lines}}
+        {{^lines}}
+            <div class="alert alert-info text-center">{{#str}} nolinesrecorded, mod_dialoguebuilder {{/str}}</div>
+        {{/lines}}
+    </div>
+</div>
+
+{{#js}}
+require(['mod_dialoguebuilder/player'], function(Player) {
+    Player.init('{{chatid}}');
+});
+{{/js}}
