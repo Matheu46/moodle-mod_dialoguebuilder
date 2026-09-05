@@ -116,6 +116,27 @@ if (has_capability('mod/dialoguebuilder:grade', $context)) {
     // Student view.
     echo $OUTPUT->box(get_string('studentguidelines', 'mod_dialoguebuilder'), 'generalbox student-view-box');
 
+    // Display dates.
+    $studenttable = new html_table();
+    $studenttable->attributes['class'] = 'generaltable submission-status-table mt-3 mx-auto';
+    $studenttable->attributes['style'] = 'max-width: 600px; width: 100%;';
+
+    if ($dialoguebuilder->timeopen > 0) {
+        $studenttable->data[] = [
+            html_writer::tag('strong', get_string('timeopen', 'mod_dialoguebuilder')),
+            userdate($dialoguebuilder->timeopen)
+        ];
+    }
+    if ($dialoguebuilder->timeclose > 0) {
+        $studenttable->data[] = [
+            html_writer::tag('strong', get_string('timeclose', 'mod_dialoguebuilder')),
+            userdate($dialoguebuilder->timeclose)
+        ];
+    }
+    if (!empty($studenttable->data)) {
+        echo html_writer::table($studenttable);
+    }
+
     // Check if the student has already submitted.
     $submission = $DB->get_record('dialoguebuilder_subs', [
         'dialoguebuilderid' => $dialoguebuilder->id,
