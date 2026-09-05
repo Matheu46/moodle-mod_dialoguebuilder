@@ -37,9 +37,11 @@ $dialoguebuilder = $DB->get_record('dialoguebuilder', ['id' => $cm->instance], '
 require_login($course, true, $cm);
 $context = context_module::instance($cm->id);
 
-// Note: the view capability should be added in db/access.php in the future.
-// Right now, any logged-in user who can access the course module can view this.
+// Note: any logged-in user who can access the course module can view this.
 require_capability('mod/dialoguebuilder:view', $context);
+
+// Completion and trigger events.
+dialoguebuilder_view($dialoguebuilder, $course, $cm, $context);
 
 // Page setup.
 $PAGE->set_url('/mod/dialoguebuilder/view.php', ['id' => $cm->id]);

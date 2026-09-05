@@ -295,3 +295,32 @@ function dialoguebuilder_extend_settings_navigation(settings_navigation $setting
         $dialoguebuildernode->add_node($node);
     }
 }
+
+/**
+ * Mark the activity completed (if required) and trigger the course_module_viewed event.
+ *
+ * @param stdClass $dialoguebuilder Dialoguebuilder object.
+ * @param stdClass $course Course object.
+ * @param stdClass $cm Course module object.
+ * @param context_module $context Context module object.
+ */
+function dialoguebuilder_view($dialoguebuilder, $course, $cm, $context) {
+    global $CFG;
+    require_once($CFG->libdir . '/completionlib.php');
+
+    // Trigger course_module_viewed event.
+    $params = [
+        'context' => $context,
+        'objectid' => $dialoguebuilder->id,
+    ];
+
+    $event = \mod_dialoguebuilder\event\course_module_viewed::create($params);
+    $event->add_record_snapshot('course_modules', $cm);
+    $event->add_record_snapshot('course', $course);
+    $event->add_record_snapshot('dialoguebuilder', $dialoguebuilder);
+    $event->trigger();
+
+    // Completion.
+    $completion = new completion_info($course);
+    $completion->set_module_viewed($cm);
+}

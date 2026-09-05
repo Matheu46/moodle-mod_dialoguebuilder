@@ -14,26 +14,33 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
+namespace mod_dialoguebuilder\event;
+
 /**
- * Upgrade code for mod_dialoguebuilder.
+ * The mod_dialoguebuilder course module viewed event class.
  *
  * @package    mod_dialoguebuilder
  * @copyright  2026 Matheus Mathias
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+class course_module_viewed extends \core\event\course_module_viewed {
+    /**
+     * Init method.
+     *
+     * @return void
+     */
+    protected function init() {
+        $this->data['objecttable'] = 'dialoguebuilder';
+        $this->data['crud'] = 'r';
+        $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
+    }
 
-/**
- * Upgrade the dialoguebuilder module.
- *
- * @param int $oldversion
- * @return bool
- */
-function xmldb_dialoguebuilder_upgrade($oldversion) {
-    global $DB;
-
-    $dbman = $DB->get_manager();
-
-    // Upgrade steps will go here in future versions.
-
-    return true;
+    /**
+     * Return object id mapping.
+     *
+     * @return array
+     */
+    public static function get_objectid_mapping() {
+        return ['db' => 'dialoguebuilder', 'restore' => 'dialoguebuilder'];
+    }
 }
