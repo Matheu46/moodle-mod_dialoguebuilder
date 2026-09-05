@@ -99,6 +99,7 @@ $string['status_draft'] = 'Draft';
 $string['status_submitted'] = 'Submitted';
 $string['student'] = 'Student';
 $string['studentguidelines'] = 'Read the teacher\'s guidelines above and create your script.';
+$string['submission'] = 'Submission';
 $string['submissions'] = 'Submissions';
 $string['submissionsclosed'] = 'Submissions for this activity closed on {$a}.';
 $string['submittask'] = 'Submit task';
