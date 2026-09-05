@@ -63,6 +63,16 @@ if ($action === 'grade' && data_submitted() && confirm_sesskey()) {
 
     dialoguebuilder_update_grades($dialoguebuilder, $submission->userid);
 
+    // Trigger submission_graded event.
+    $event = \mod_dialoguebuilder\event\submission_graded::create([
+        'context' => $context,
+        'objectid' => $submission->id,
+        'relateduserid' => $submission->userid,
+    ]);
+    $event->add_record_snapshot('dialoguebuilder_subs', $submission);
+    $event->add_record_snapshot('dialoguebuilder', $dialoguebuilder);
+    $event->trigger();
+
     if ($saveandnext && $nextsubid) {
         redirect(
             new moodle_url('/mod/dialoguebuilder/report.php', ['id' => $cm->id, 'action' => 'view', 'subid' => $nextsubid]),

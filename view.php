@@ -124,13 +124,13 @@ if (has_capability('mod/dialoguebuilder:grade', $context)) {
     if ($dialoguebuilder->timeopen > 0) {
         $studenttable->data[] = [
             html_writer::tag('strong', get_string('timeopen', 'mod_dialoguebuilder')),
-            userdate($dialoguebuilder->timeopen)
+            userdate($dialoguebuilder->timeopen),
         ];
     }
     if ($dialoguebuilder->timeclose > 0) {
         $studenttable->data[] = [
             html_writer::tag('strong', get_string('timeclose', 'mod_dialoguebuilder')),
-            userdate($dialoguebuilder->timeclose)
+            userdate($dialoguebuilder->timeclose),
         ];
     }
     if (!empty($studenttable->data)) {

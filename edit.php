@@ -71,7 +71,9 @@ if (data_submitted() && ($action === 'save_draft' || $action === 'submit')) {
             $newstatus = ($action === 'submit') ? 'submitted' : 'draft';
         }
 
+        $isnew = false;
         if (!$submission) {
+            $isnew = true;
             $submission = new stdClass();
             $submission->dialoguebuilderid = $dialoguebuilder->id;
             $submission->userid = $USER->id;
@@ -79,6 +81,9 @@ if (data_submitted() && ($action === 'save_draft' || $action === 'submit')) {
             $submission->timecreated = time();
             $submission->timemodified = time();
             $submission->id = $DB->insert_record('dialoguebuilder_subs', $submission);
+
+            // Re-fetch the record so the snapshot has all database fields (grade, feedback, etc.)
+            $submission = $DB->get_record('dialoguebuilder_subs', ['id' => $submission->id]);
         } else {
             $submission->timemodified = time();
             $submission->status = $newstatus;
@@ -173,6 +178,20 @@ if (data_submitted() && ($action === 'save_draft' || $action === 'submit')) {
                 $DB->insert_record('dialoguebuilder_lines', $newline);
             }
         }
+
+        // Trigger event.
+        $eventparams = [
+            'context' => $context,
+            'objectid' => $submission->id,
+        ];
+        if ($isnew) {
+            $event = \mod_dialoguebuilder\event\submission_created::create($eventparams);
+        } else {
+            $event = \mod_dialoguebuilder\event\submission_updated::create($eventparams);
+        }
+        $event->add_record_snapshot('dialoguebuilder_subs', $submission);
+        $event->add_record_snapshot('dialoguebuilder', $dialoguebuilder);
+        $event->trigger();
 
         $msg = ($action === 'submit') ?
             get_string('tasksubmitted', 'mod_dialoguebuilder') :
