@@ -36,6 +36,7 @@ $string['characternameplaceholder'] = 'Character name...';
 $string['characters'] = 'Characters';
 $string['confirmsubmission'] = 'Confirm submission';
 $string['confirmsubmissionmsg'] = 'Submit for grading? You can still edit it, but you can\'t return it to draft status.';
+$string['deleteallsubmissions'] = 'Delete all dialogue submissions';
 $string['dialoguebuilder:addinstance'] = 'Add a new Dialogue Builder activity';
 $string['dialoguebuilder:grade'] = 'Grade dialogues';
 $string['dialoguebuilder:submit'] = 'Submit a dialogue script';

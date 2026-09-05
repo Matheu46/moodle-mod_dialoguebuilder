@@ -90,6 +90,14 @@ function dialoguebuilder_delete_instance($id) {
         $DB->delete_records_select('dialoguebuilder_subs', "dialoguebuilderid = ?", [$id]);
     }
 
+    // Delete files associated with this module (e.g. avatars, intro files).
+    $cm = get_coursemodule_from_instance('dialoguebuilder', $id);
+    if ($cm) {
+        $context = context_module::instance($cm->id);
+        $fs = get_file_storage();
+        $fs->delete_area_files($context->id, 'mod_dialoguebuilder');
+    }
+
     // Finally, delete the activity instance itself.
     $DB->delete_records('dialoguebuilder', ['id' => $id]);
 
@@ -323,4 +331,88 @@ function dialoguebuilder_view($dialoguebuilder, $course, $cm, $context) {
     // Completion.
     $completion = new completion_info($course);
     $completion->set_module_viewed($cm);
+}
+
+/**
+ * Add elements to the course reset form.
+ *
+ * @param MoodleQuickForm $mform
+ */
+function dialoguebuilder_reset_course_form_definition($mform) {
+    $mform->addElement('header', 'dialoguebuilderheader', get_string('modulenameplural', 'mod_dialoguebuilder'));
+    $mform->addElement('checkbox', 'reset_dialoguebuilder', get_string('deleteallsubmissions', 'mod_dialoguebuilder'));
+}
+
+/**
+ * Default values for the course reset form.
+ *
+ * @param stdClass $course
+ * @return array
+ */
+function dialoguebuilder_reset_course_form_defaults($course) {
+    return ['reset_dialoguebuilder' => 1];
+}
+
+/**
+ * Execute the course reset.
+ *
+ * @param stdClass $data
+ * @return array array of status objects.
+ */
+function dialoguebuilder_reset_userdata($data) {
+    global $DB;
+
+    $componentstr = get_string('modulenameplural', 'mod_dialoguebuilder');
+    $status = [];
+
+    if (!empty($data->reset_dialoguebuilder)) {
+        // Find all dialoguebuilder instances in this course.
+        $sql = "SELECT *
+                  FROM {dialoguebuilder} db
+                 WHERE db.course = :course";
+        $params = ['course' => $data->courseid];
+
+        $dbs = $DB->get_records_sql($sql, $params);
+        if ($dbs) {
+            $dbids = array_keys($dbs);
+            [$insql, $inparams] = $DB->get_in_or_equal($dbids);
+
+            // Get all submissions for these instances.
+            $submissions = $DB->get_records_select('dialoguebuilder_subs', "dialoguebuilderid $insql", $inparams);
+
+            if ($submissions) {
+                $subids = array_keys($submissions);
+                [$subinsql, $subinparams] = $DB->get_in_or_equal($subids);
+
+                // Delete avatars using file storage.
+                $fs = get_file_storage();
+                foreach ($dbs as $db) {
+                    $cm = get_coursemodule_from_instance('dialoguebuilder', $db->id);
+                    if ($cm) {
+                        $context = context_module::instance($cm->id);
+                        $fs->delete_area_files($context->id, 'mod_dialoguebuilder', 'avatar');
+                    }
+                }
+
+                // Delete DB records.
+                $DB->delete_records_select('dialoguebuilder_lines', "submissionid $subinsql", $subinparams);
+                $DB->delete_records_select('dialoguebuilder_chars', "submissionid $subinsql", $subinparams);
+                $DB->delete_records_select('dialoguebuilder_subs', "dialoguebuilderid $insql", $inparams);
+            }
+
+            // Clean up grades if necessary (Moodle gradebook reset usually handles grades,
+            // but we call our update_grades to push empty grades to gradebook just in case).
+            foreach ($dbs as $db) {
+                dialoguebuilder_update_grades($db);
+            }
+        }
+
+        $status[] = [
+            'component' => $componentstr,
+            'item' => get_string('deleteallsubmissions', 'mod_dialoguebuilder'),
+            'error' => false,
+        ];
+    }
+
+    return $status;
 }
