@@ -42,7 +42,11 @@ define(['core/str', 'core/emoji/picker', 'core/notification'], function(str, emo
                 {key: 'unnamed', component: 'mod_dialoguebuilder'},
                 {key: 'writelineplaceholder', component: 'mod_dialoguebuilder'},
                 {key: 'character', component: 'mod_dialoguebuilder'},
-                {key: 'emptyfieldwarning', component: 'mod_dialoguebuilder'}
+                {key: 'emptyfieldwarning', component: 'mod_dialoguebuilder'},
+                {key: 'confirmsubmission', component: 'mod_dialoguebuilder'},
+                {key: 'confirmsubmissionmsg', component: 'mod_dialoguebuilder'},
+                {key: 'submit', component: 'core'},
+                {key: 'cancel', component: 'core'}
             ]).then(function(strings) {
                 var langStrings = {
                     changeavatar: strings[0],
@@ -50,7 +54,11 @@ define(['core/str', 'core/emoji/picker', 'core/notification'], function(str, emo
                     unnamed: strings[2],
                     writelineplaceholder: strings[3],
                     character: strings[4],
-                    emptyfieldwarning: strings[5]
+                    emptyfieldwarning: strings[5],
+                    confirmsubmission: strings[6],
+                    confirmsubmissionmsg: strings[7],
+                    submit: strings[8],
+                    cancel: strings[9]
                 };
 
                 var characters = [];
@@ -464,7 +472,12 @@ define(['core/str', 'core/emoji/picker', 'core/notification'], function(str, emo
                     });
                 }
 
-                submitForm.addEventListener('submit', function(e) {
+                /**
+                 * Validates the form by checking for empty fields.
+                 *
+                 * @return {boolean} True if form is valid, false otherwise.
+                 */
+                function validateForm() {
                     var hasEmptyLines = false;
                     var textareas = linesContainer.querySelectorAll('textarea');
 
@@ -478,12 +491,11 @@ define(['core/str', 'core/emoji/picker', 'core/notification'], function(str, emo
                     });
 
                     if (hasEmptyLines) {
-                        e.preventDefault(); // Stop submission
                         Notification.addNotification({
                             message: langStrings.emptyfieldwarning,
                             type: 'error'
                         });
-                        return;
+                        return false;
                     }
 
                     var payload = {
@@ -491,7 +503,49 @@ define(['core/str', 'core/emoji/picker', 'core/notification'], function(str, emo
                         lines: lines
                     };
                     dataInput.value = JSON.stringify(payload);
+                    return true;
+                }
+
+                submitForm.addEventListener('submit', function(e) {
+                    if (!validateForm()) {
+                        e.preventDefault();
+                    }
                 });
+
+                var mainSubmitBtn = document.getElementById('mod-dialoguebuilder__submit-btn');
+                if (mainSubmitBtn) {
+                    mainSubmitBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        if (validateForm()) {
+                            var isDraft = document.getElementById('mod-dialoguebuilder__save-draft-btn') !== null;
+
+                            if (isDraft) {
+                                Notification.confirm(
+                                    langStrings.confirmsubmission,
+                                    langStrings.confirmsubmissionmsg,
+                                    langStrings.submit,
+                                    langStrings.cancel,
+                                    function() {
+                                        var actionInput = document.createElement('input');
+                                        actionInput.type = 'hidden';
+                                        actionInput.name = 'action';
+                                        actionInput.value = 'submit';
+                                        submitForm.appendChild(actionInput);
+                                        submitForm.submit();
+                                    }
+                                );
+                            } else {
+                                // Already submitted, just save changes.
+                                var actionInput = document.createElement('input');
+                                actionInput.type = 'hidden';
+                                actionInput.name = 'action';
+                                actionInput.value = 'submit';
+                                submitForm.appendChild(actionInput);
+                                submitForm.submit();
+                            }
+                        }
+                    });
+                }
 
                 // Initial render.
                 renderCharacters();
