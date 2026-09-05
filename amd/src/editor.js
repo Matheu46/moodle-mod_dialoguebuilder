@@ -393,6 +393,17 @@ define(['core/str', 'core/emoji/picker', 'core/notification'], function(str, emo
                     });
 
                     linesContainer.scrollTop = currentScroll;
+                    updateSubmitButtonState();
+                }
+
+                /**
+                 * Updates the state of the submit button based on line count.
+                 */
+                function updateSubmitButtonState() {
+                    var submitBtn = document.getElementById('mod-dialoguebuilder__submit-btn');
+                    if (submitBtn) {
+                        submitBtn.disabled = (lines.length === 0);
+                    }
                 }
 
                 document.getElementById('mod-dialoguebuilder__add-char-btn').addEventListener('click', function(e) {
