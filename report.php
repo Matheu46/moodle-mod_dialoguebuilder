@@ -314,12 +314,38 @@ if ($action === 'view' && $subid) {
         ];
         $table->data = [];
 
+        // Bulk preload data.
+        $subids = array_keys($submissions);
+        $userids = [];
         foreach ($submissions as $sub) {
-            $user = $DB->get_record('user', ['id' => $sub->userid], '*', MUST_EXIST);
+            $userids[$sub->userid] = $sub->userid;
+        }
+
+        [$uinsql, $uinparams] = $DB->get_in_or_equal($userids);
+        $users = $DB->get_records_select('user', "id $uinsql", $uinparams);
+
+        [$sinsql, $sinparams] = $DB->get_in_or_equal($subids);
+
+        // Preload char counts.
+        $charssql = "SELECT submissionid, COUNT(1) AS count
+                       FROM {dialoguebuilder_chars}
+                      WHERE submissionid $sinsql
+                   GROUP BY submissionid";
+        $charcounts = $DB->get_records_sql($charssql, $sinparams);
+
+        // Preload line counts.
+        $linessql = "SELECT submissionid, COUNT(1) AS count
+                       FROM {dialoguebuilder_lines}
+                      WHERE submissionid $sinsql
+                   GROUP BY submissionid";
+        $linecounts = $DB->get_records_sql($linessql, $sinparams);
+
+        foreach ($submissions as $sub) {
+            $user = $users[$sub->userid];
             $fullname = fullname($user);
 
-            $charcount = $DB->count_records('dialoguebuilder_chars', ['submissionid' => $sub->id]);
-            $linecount = $DB->count_records('dialoguebuilder_lines', ['submissionid' => $sub->id]);
+            $charcount = isset($charcounts[$sub->id]) ? $charcounts[$sub->id]->count : 0;
+            $linecount = isset($linecounts[$sub->id]) ? $linecounts[$sub->id]->count : 0;
 
             $viewurl = new moodle_url(
                 '/mod/dialoguebuilder/report.php',

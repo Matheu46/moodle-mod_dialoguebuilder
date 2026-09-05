@@ -97,11 +97,44 @@ if (empty($submissions)) {
     $cards = [];
     $fs = get_file_storage();
 
+    // Bulk preload data.
+    $subids = array_keys($submissions);
+    [$insql, $inparams] = $DB->get_in_or_equal($subids);
+
+    // Preload characters.
+    $allchars = $DB->get_records_select('dialoguebuilder_chars', "submissionid $insql", $inparams, 'submissionid ASC, id ASC');
+    $charsbysub = [];
+    foreach ($allchars as $char) {
+        $charsbysub[$char->submissionid][] = $char;
+    }
+
+    // Preload first lines.
+    $linesql = "SELECT *
+                  FROM {dialoguebuilder_lines}
+                 WHERE submissionid $insql
+              ORDER BY submissionid ASC, sortorder ASC";
+    $alllines = $DB->get_records_sql($linesql, $inparams);
+    $firstlines = [];
+    foreach ($alllines as $line) {
+        if (!isset($firstlines[$line->submissionid])) {
+            $firstlines[$line->submissionid] = $line;
+        }
+    }
+
+    // Preload avatar files for this context.
+    $allfiles = $fs->get_area_files($context->id, 'mod_dialoguebuilder', 'avatar', false, 'itemid ASC, id DESC', false);
+    $filesbyitem = [];
+    foreach ($allfiles as $f) {
+        if (!isset($filesbyitem[$f->get_itemid()])) {
+            $filesbyitem[$f->get_itemid()] = $f;
+        }
+    }
+
     foreach ($submissions as $sub) {
         $fullname = fullname($sub);
 
         // Find characters to get avatars and title (first line).
-        $characters = $DB->get_records('dialoguebuilder_chars', ['submissionid' => $sub->id], 'id ASC');
+        $characters = isset($charsbysub[$sub->id]) ? $charsbysub[$sub->id] : [];
         $avatars = [];
         $preview = '';
 
@@ -113,9 +146,8 @@ if (empty($submissions)) {
                 }
 
                 $avatarurl = $OUTPUT->image_url('u/f2')->out(false);
-                $files = $fs->get_area_files($context->id, 'mod_dialoguebuilder', 'avatar', $char->id, 'id DESC', false);
-                if (!empty($files)) {
-                    $file = reset($files);
+                if (isset($filesbyitem[$char->id])) {
+                    $file = $filesbyitem[$char->id];
                     $avatarurl = moodle_url::make_pluginfile_url(
                         $file->get_contextid(),
                         $file->get_component(),
@@ -134,15 +166,8 @@ if (empty($submissions)) {
             }
 
             // Get first line for preview.
-            $firstline = $DB->get_record(
-                'dialoguebuilder_lines',
-                ['submissionid' => $sub->id],
-                '*',
-                IGNORE_MULTIPLE,
-                'sortorder ASC'
-            );
-            if ($firstline) {
-                $preview = shorten_text(strip_tags($firstline->text_content), 60);
+            if (isset($firstlines[$sub->id])) {
+                $preview = shorten_text(strip_tags($firstlines[$sub->id]->text_content), 60);
             }
         } else {
             // Fallback if no characters.
@@ -151,6 +176,7 @@ if (empty($submissions)) {
                 'is_second' => false,
             ];
         }
+
 
         $viewurl = new moodle_url(
             '/mod/dialoguebuilder/view_submission.php',
