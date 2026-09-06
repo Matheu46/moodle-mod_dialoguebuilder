@@ -22,6 +22,9 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
         <KEY NAME="course" TYPE="foreign" FIELDS="course" REFTABLE="course" REFFIELDS="id"/>
       </KEYS>
+      <INDEXES>
+        <INDEX NAME="course" UNIQUE="false" FIELDS="course"/>
+      </INDEXES>
     </TABLE>
     <TABLE NAME="dialoguebuilder_subs" COMMENT="Submissions for dialogue builder">
       <FIELDS>
@@ -39,6 +42,10 @@
         <KEY NAME="dialoguebuilderid" TYPE="foreign" FIELDS="dialoguebuilderid" REFTABLE="dialoguebuilder" REFFIELDS="id"/>
         <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
       </KEYS>
+      <INDEXES>
+        <INDEX NAME="dialoguebuilderid" UNIQUE="false" FIELDS="dialoguebuilderid"/>
+        <INDEX NAME="userid" UNIQUE="false" FIELDS="userid"/>
+      </INDEXES>
     </TABLE>
     <TABLE NAME="dialoguebuilder_chars" COMMENT="Characters created in the submission">
       <FIELDS>
@@ -51,6 +58,9 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
         <KEY NAME="submissionid" TYPE="foreign" FIELDS="submissionid" REFTABLE="dialoguebuilder_subs" REFFIELDS="id"/>
       </KEYS>
+      <INDEXES>
+        <INDEX NAME="submissionid" UNIQUE="false" FIELDS="submissionid"/>
+      </INDEXES>
     </TABLE>
     <TABLE NAME="dialoguebuilder_lines" COMMENT="Lines of the dialogue">
       <FIELDS>
@@ -65,6 +75,10 @@
         <KEY NAME="submissionid" TYPE="foreign" FIELDS="submissionid" REFTABLE="dialoguebuilder_subs" REFFIELDS="id"/>
         <KEY NAME="characterid" TYPE="foreign" FIELDS="characterid" REFTABLE="dialoguebuilder_chars" REFFIELDS="id"/>
       </KEYS>
+      <INDEXES>
+        <INDEX NAME="submissionid" UNIQUE="false" FIELDS="submissionid"/>
+        <INDEX NAME="characterid" UNIQUE="false" FIELDS="characterid"/>
+      </INDEXES>
     </TABLE>
   </TABLES>
 </XMLDB>
