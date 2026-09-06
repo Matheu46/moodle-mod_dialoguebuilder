@@ -254,6 +254,7 @@ function dialoguebuilder_pluginfile($course, $cm, $context, $filearea, $args, $f
     }
 
     require_login($course, true, $cm);
+    require_capability('mod/dialoguebuilder:view', $context);
 
     if ($filearea === 'avatar') {
         $itemid = (int)array_shift($args);
