@@ -133,18 +133,22 @@ if (data_submitted() && ($action === 'save_draft' || $action === 'submit')) {
                     $data = base64_decode($b64string);
 
                     if ($data !== false && strlen($data) <= $maxbytes) {
-                        $extension = strtolower($type[1]);
-                        if (in_array($extension, ['png', 'jpeg', 'jpg', 'gif', 'webp'])) {
-                            $fileinfo = [
-                                'contextid' => $context->id,
-                                'component' => 'mod_dialoguebuilder',
-                                'filearea' => 'avatar',
-                                'itemid' => $charid,
-                                'filepath' => '/',
-                                'filename' => 'avatar.' . $extension,
-                            ];
-                            $fs->delete_area_files($context->id, 'mod_dialoguebuilder', 'avatar', $charid);
-                            $fs->create_file_from_string($fileinfo, $data);
+                        $imageinfo = @getimagesizefromstring($data);
+                        if ($imageinfo !== false) {
+                            // Extract actual extension from the parsed binary data (ignores the regex type).
+                            $extension = strtolower(image_type_to_extension($imageinfo[2], false));
+                            if (in_array($extension, ['png', 'jpeg', 'jpg', 'gif', 'webp'])) {
+                                $fileinfo = [
+                                    'contextid' => $context->id,
+                                    'component' => 'mod_dialoguebuilder',
+                                    'filearea' => 'avatar',
+                                    'itemid' => $charid,
+                                    'filepath' => '/',
+                                    'filename' => 'avatar.' . $extension,
+                                ];
+                                $fs->delete_area_files($context->id, 'mod_dialoguebuilder', 'avatar', $charid);
+                                $fs->create_file_from_string($fileinfo, $data);
+                            }
                         }
                     }
                 }
