@@ -34,7 +34,6 @@ function xmldb_dialoguebuilder_upgrade($oldversion) {
     $dbman = $DB->get_manager();
 
     if ($oldversion < 2026090500) {
-
         // Define index course (not unique) to be added to dialoguebuilder.
         $table = new xmldb_table('dialoguebuilder');
         $index = new xmldb_index('course', XMLDB_INDEX_NOTUNIQUE, ['course']);
